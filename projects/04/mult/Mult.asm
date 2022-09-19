@@ -10,3 +10,46 @@
 // R0 >= 0, R1 >= 0, and R0*R1 < 32768.
 
 // Put your code here.
+
+//set i to 0
+@i
+M=0
+
+//set sum to 0
+@sum
+M=0
+
+(LOOP)
+//if i = R1, JUMP to end
+@i
+D=M
+@R1
+D=D-M
+@END
+D;JEQ
+
+// if not, add up sum and i
+// add up sum
+@R0
+D=M
+@sum
+M = D+M
+
+//add up i
+@i
+M = M+1
+
+//jump to loop
+@LOOP
+0;JMP
+
+(END)
+//assign sum to R2
+@sum 
+D=M
+@R2
+M=D
+
+(END2)
+@END2
+0;JMP
