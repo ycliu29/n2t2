@@ -12,3 +12,48 @@
 // the screen should remain fully clear as long as no key is pressed.
 
 // Put your code here.
+
+// set i to 16384
+@16384
+D=A
+@i
+M=D
+
+(LOOP)
+@24576
+D=A
+@i
+D=D-M
+@RESET
+D;JEQ
+
+@24576
+D=M
+@WHITE
+D;JEQ
+@i
+A=M
+M=-1
+@i
+M=M+1
+
+@LOOP
+0;JMP
+
+(WHITE)
+@i
+A=M
+M=0
+@i
+M=M+1
+@LOOP
+0;JMP
+
+//set i to 16384
+(RESET)
+@8192
+D=A
+@i
+M=M-D
+@LOOP
+0;JMP
