@@ -24,19 +24,25 @@ class Parser
 
   def commandType(line)
     result = ''
-    case line[0..2]
-    when 'add' then result = 'C_ARITHMETIC'
-    when 'sub' then result = 'C_ARITHMETIC'
-    when 'neg' then result = 'C_ARITHMETIC'
-    when 'and' then result = 'C_ARITHMETIC'
-    when 'not' then result = 'C_ARITHMETIC'
-    end
 
     case line[0..1]
     when 'eq' then result = 'C_ARITHMETIC'
     when 'gt' then result = 'C_ARITHMETIC'
     when 'lt' then reslut = 'C_ARITHMETIC'
     when 'or' then result = 'C_ARITHMETIC'
+    end
+
+    case line[0..2]
+    when 'add' then result = 'C_ARITHMETIC'
+    when 'sub' then result = 'C_ARITHMETIC'
+    when 'neg' then result = 'C_ARITHMETIC'
+    when 'and' then result = 'C_ARITHMETIC'
+    when 'not' then result = 'C_ARITHMETIC'
+    when 'pop' then result = 'C_POP'
+    end
+
+    case line[0..3]
+    when 'push' then result = 'C_PUSH'
     end
 
     result == '' ? result = 'UNKNOWN' : nil
