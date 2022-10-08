@@ -8,7 +8,6 @@ def main
 
   # iterate line by line
   vm_f.each do |line|
-    puts line
     asm_f.write(line)
   end
 end
