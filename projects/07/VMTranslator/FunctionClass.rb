@@ -68,7 +68,7 @@ class Parser
 
   def self.arg2(line)
     regex = /[\s]([a-zA-Z]+)[\s]([0-9]+)[\s]|[\n]/
-    matches = regex.match(line).captures
+    capture_array = regex.match(line).captures
   end
 end
 
