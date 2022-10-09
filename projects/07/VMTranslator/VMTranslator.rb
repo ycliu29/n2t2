@@ -8,7 +8,8 @@ def main
 
   # iterate line by line
   vm_f.each do |line|
-    asm_f.write(line)
+    translated_line = Writer.write(Parser.parse(line))
+    translated_line == nil ? nil : asm_f.write("#{translated_line}\n")
   end
 end
 
