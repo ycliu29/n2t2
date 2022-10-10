@@ -7,6 +7,7 @@ class Parser
                       :arg1        => nil,
                       :segment     => nil,
                       :index       => nil }
+
       case command_hash[:commandType]
       when 'C_ARITHMETIC' then command_hash[:arg1] = arg1(line)
       when 'C_PUSH' 
@@ -78,6 +79,49 @@ class Writer
       return nil
     end
 
-    command_hash
+    case command_hash[:commandType]
+    when 'C_ARITHMETIC' then writeArithmetic(command_hash[:arg1])
+    when 'C_PUSH' then writePushPop(command_hash)
+    else command_hash
+    end
+  end
+
+  def self.writeArithmetic(command)
+    case command
+    when 'add'
+      <<~CODE
+      // add
+      @SP // sp--
+      M = M-1
+      @SP // SP* + (SP-1)*
+      A = M
+      D = M
+      @SP
+      A = M-1
+      M = M+D
+      
+      CODE
+    end
+  end
+
+  def self.writePushPop(command_hash)
+    if command_hash[:commandType] == 'C_PUSH'
+      case command_hash[:segment]
+      when 'constant'
+        <<~CODE
+        // #{command_hash[:arg1]} #{command_hash[:segment]} #{command_hash[:index]}
+        @#{command_hash[:index]} // *sp = i
+        D = A
+        @SP
+        A = M
+        M = D
+        @SP // sp++
+        M = M+1
+        
+        CODE
+      end
+    end
+
+    # pop to be added
   end
 end
