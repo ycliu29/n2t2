@@ -3,10 +3,10 @@ class Parser
     if comment_or_linebreak?(line) == true # return nil
       command_hash = nil
     else
-      command_hash = { :commandType => commandType(line),
+      command_hash = {:commandType => commandType(line),
                       :arg1        => nil,
                       :segment     => nil,
-                      :index       => nil }
+                      :index       => nil}
 
       case command_hash[:commandType]
       when 'C_ARITHMETIC' then command_hash[:arg1] = arg1(line)
@@ -69,7 +69,7 @@ class Parser
 
   def self.arg2(line)
     regex = /[\s]([a-zA-Z]+)[\s]([0-9]+)[\s]|[\n]/
-    capture_array = regex.match(line).captures
+    captured_array = regex.match(line).captures
   end
 end
 
