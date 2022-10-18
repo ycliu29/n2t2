@@ -101,7 +101,34 @@ class Writer
       M = M+D
       
       CODE
+    when 'sub'
+      <<~CODE
+      // sub
+      @SP // sp--
+      M = M-1
+      @SP // (SP-1)* - SP*
+      A = M
+      D = M 
+      @SP
+      A = M-1
+      M = M-D
+
+      CODE
+    when 'neg'
+      <<~CODE
+      // neg
+      @SP
+      A = M-1
+      M = -M
+
+      CODE
+    when 'eq'
+      <<~CODE
+      // eq
+
+      CODE
     end
+
   end
 
   def self.writePushPop(command_hash)
