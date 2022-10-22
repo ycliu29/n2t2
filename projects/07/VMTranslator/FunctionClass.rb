@@ -90,7 +90,7 @@ class Writer
     case command
     when 'add'
       <<~CODE
-      // add
+      // add (line: #{$line_count})
       @SP // sp--
       M = M-1
       @SP // SP* + (SP-1)*
@@ -103,7 +103,7 @@ class Writer
       CODE
     when 'sub'
       <<~CODE
-      // sub
+      // sub (line: #{$line_count})
       @SP // sp--
       M = M-1
       @SP // (SP-1)* - SP*
@@ -116,7 +116,7 @@ class Writer
       CODE
     when 'neg'
       <<~CODE
-      // neg
+      // neg (line: #{$line_count})
       @SP
       A = M-1
       M = -M
@@ -124,7 +124,7 @@ class Writer
       CODE
     when 'eq'
       <<~CODE
-      // eq
+      // eq (line: #{$line_count})
 
       CODE
     end
@@ -136,7 +136,7 @@ class Writer
       case command_hash[:segment]
       when 'constant'
         <<~CODE
-        // #{command_hash[:arg1]} #{command_hash[:segment]} #{command_hash[:index]}
+        // #{command_hash[:arg1]} #{command_hash[:segment]} #{command_hash[:index]} (line: #{$line_count})
         @#{command_hash[:index]} // *sp = i
         D = A
         @SP

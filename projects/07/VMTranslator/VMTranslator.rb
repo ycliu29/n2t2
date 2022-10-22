@@ -1,5 +1,7 @@
 require_relative 'FunctionClass.rb'
 
+$line_count = 0
+
 def main
   # open, create necessary files
   target_file = ARGV[0]
@@ -8,6 +10,7 @@ def main
 
   # iterate line by line
   vm_f.each do |line|
+    $line_count += 1
     translated_line = Writer.write(Parser.parse(line))
     translated_line == nil ? nil : asm_f.write(translated_line)
   end
