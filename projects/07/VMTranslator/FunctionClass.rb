@@ -125,9 +125,119 @@ class Writer
     when 'eq'
       <<~CODE
       // eq (line: #{$line_count})
+      @SP // sp--
+      M = M-1
+      @SP // SP* == (SP-1)* ?
+      A = M
+      D = M
+      @SP
+      A = M-1
+      D = D-M
+      @EQ#{$line_count}
+      D;JEQ
+
+      @SP // (SP-1)* = 0
+      A = M-1
+      M = 0
+      @END#{$line_count}
+      0;JEQ
+
+      (EQ#{$line_count}) // (SP-1)* = -1
+      @SP
+      A = M-1
+      M = -1
+      (END#{$line_count})
+
+      CODE
+    when 'gt'
+      <<~CODE
+      // gt (line: #{$line_count})
+      @SP // sp--
+      M = M-1
+      @SP // (SP-1)* > SP* ?  
+      A = M
+      D = M
+      @SP
+      A = M-1
+      D = M-D
+      @GT#{$line_count}
+      D;JGT
+
+      @SP // (SP-1)* = 0
+      A = M-1
+      M = 0
+      @END#{$line_count}
+      0;JEQ
+
+      (GT#{$line_count}) // (SP-1)* = -1
+      @SP
+      A = M-1
+      M = -1
+      (END#{$line_count})
+
+      CODE
+    when 'lt'
+      <<~CODE
+      // lt (line: #{$line_count})
+      @SP // sp--
+      M = M-1
+      @SP // (SP-1)* < SP* ?  
+      A = M
+      D = M
+      @SP
+      A = M-1
+      D = M-D
+      @LT#{$line_count}
+      D;JLT
+
+      @SP // (SP-1)* = 0
+      A = M-1
+      M = 0
+      @END#{$line_count}
+      0;JEQ
+
+      (LT#{$line_count}) // (SP-1)* = -1
+      @SP
+      A = M-1
+      M = -1
+      (END#{$line_count})
+
+      CODE
+    when 'and'
+      <<~CODE
+      // and (line: #{$line_count})
+      @SP // sp--
+      M = M-1
+      A = M // (SP-1)* = SP* and (SP-1)*
+      D = M
+      @SP
+      A = M-1
+      M = D&M
+
+      CODE
+    when 'or'
+      <<~CODE
+      // or (line: #{$line_count})
+      @SP // sp--
+      M = M-1
+      A = M // (SP-1)* = SP* or (SP-1)*
+      D = M
+      @SP
+      A = M-1
+      M = D|M
+
+      CODE
+
+    when 'not'
+      <<~CODE
+      // not (line: #{$line_count})
+      @SP // (SP-1)* = !(SP-1)*
+      A = M-1
+      M = !M
 
       CODE
     end
+
 
   end
 
