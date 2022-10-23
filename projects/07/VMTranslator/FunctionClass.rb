@@ -256,6 +256,48 @@ class Writer
         M = M+1
         
         CODE
+      when 'local'
+        <<~CODE
+        // #{command_hash[:arg1]} #{command_hash[:segment]} #{command_hash[:index]} (line: #{$line_count})
+        @#{command_hash[:index]} // target = LCL+index
+        D = A
+        @LCL
+        D = D+M
+        @LOCAL#{$line_count}
+        M = D
+
+        @LOCAL#{$line_count} // sp* = target*
+        A = M
+        D = M
+        @SP
+        A = M
+        M = D
+        @SP // sp++
+        M = M+1
+
+        CODE
+        
+      end
+    elsif command_hash[:commandType] == 'C_POP'
+      case command_hash[:segment]
+      when 'local'
+        <<~CODE
+        // #{command_hash[:arg1]} #{command_hash[:segment]} #{command_hash[:index]} (line: #{$line_count})
+        @#{command_hash[:index]} // target = LCL+index
+        D = A
+        @LCL
+        D = D+M
+        @LOCAL#{$line_count}
+        M = D
+
+        @SP // sp--
+        M = M-1
+        A = M // target* = sp*
+        D = M 
+        @LOCAL#{$line_count}
+        M = D
+
+        CODE
       end
     end
 

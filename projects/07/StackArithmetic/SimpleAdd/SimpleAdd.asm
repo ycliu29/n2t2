@@ -1,4 +1,4 @@
-// push constant 7
+// push constant 7 (line: 7)
 @7 // *sp = i
 D = A
 @SP
@@ -7,7 +7,7 @@ M = D
 @SP // sp++
 M = M+1
 
-// push constant 8
+// push constant 8 (line: 8)
 @8 // *sp = i
 D = A
 @SP
@@ -16,7 +16,7 @@ M = D
 @SP // sp++
 M = M+1
 
-// add
+// add (line: 9)
 @SP // sp--
 M = M-1
 @SP // SP* + (SP-1)*
