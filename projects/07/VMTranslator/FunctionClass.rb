@@ -82,6 +82,7 @@ class Writer
     case command_hash[:commandType]
     when 'C_ARITHMETIC' then writeArithmetic(command_hash[:arg1])
     when 'C_PUSH' then writePushPop(command_hash)
+    when 'C_POP' then writePushPop(command_hash)
     else command_hash
     end
   end
@@ -276,7 +277,86 @@ class Writer
         M = M+1
 
         CODE
-        
+      when 'argument'
+        <<~CODE
+        // #{command_hash[:arg1]} #{command_hash[:segment]} #{command_hash[:index]} (line: #{$line_count})
+        @#{command_hash[:index]} // target = ARG+index
+        D = A
+        @ARG
+        D = D+M
+        @ARG#{$line_count}
+        M = D
+
+        @ARG#{$line_count} // sp* = target*
+        A = M
+        D = M
+        @SP
+        A = M
+        M = D
+        @SP // sp++
+        M = M+1
+
+        CODE
+      when 'this'
+        <<~CODE
+        // #{command_hash[:arg1]} #{command_hash[:segment]} #{command_hash[:index]} (line: #{$line_count})
+        @#{command_hash[:index]} // target = THIS+index
+        D = A
+        @THIS
+        D = D+M
+        @THIS#{$line_count}
+        M = D
+
+        @THIS#{$line_count} // sp* = target*
+        A = M
+        D = M
+        @SP
+        A = M
+        M = D
+        @SP // sp++
+        M = M+1
+
+        CODE
+      when 'that'
+        <<~CODE
+        // #{command_hash[:arg1]} #{command_hash[:segment]} #{command_hash[:index]} (line: #{$line_count})
+        @#{command_hash[:index]} // target = THAT+index
+        D = A
+        @THAT
+        D = D+M
+        @THAT#{$line_count}
+        M = D
+
+        @THAT#{$line_count} // sp* = target*
+        A = M
+        D = M
+        @SP
+        A = M
+        M = D
+        @SP // sp++
+        M = M+1
+
+        CODE
+      when 'temp'
+        <<~CODE
+        // #{command_hash[:arg1]} #{command_hash[:segment]} #{command_hash[:index]} (line: #{$line_count})
+        @#{command_hash[:index]} // target = 5+index
+        D = A
+        @5
+        D = D+A
+        @TEMP#{$line_count}
+        M = D
+
+        @TEMP#{$line_count} // sp* = target*
+        A = M
+        D = M
+        @SP
+        A = M
+        M = D
+        @SP // sp++
+        M = M+1
+
+        CODE
       end
     elsif command_hash[:commandType] == 'C_POP'
       case command_hash[:segment]
@@ -295,12 +375,87 @@ class Writer
         A = M // target* = sp*
         D = M 
         @LOCAL#{$line_count}
+        A = M
+        M = D
+
+        CODE
+      when 'argument'
+        <<~CODE
+        // #{command_hash[:arg1]} #{command_hash[:segment]} #{command_hash[:index]} (line: #{$line_count})
+        @#{command_hash[:index]} // target = ARG+index
+        D = A
+        @ARG
+        D = D+M
+        @ARG#{$line_count}
+        M = D
+
+        @SP // sp--
+        M = M-1
+        A = M // target* = sp*
+        D = M 
+        @ARG#{$line_count}
+        A = M
+        M = D
+
+        CODE
+      when 'this'
+        <<~CODE
+        // #{command_hash[:arg1]} #{command_hash[:segment]} #{command_hash[:index]} (line: #{$line_count})
+        @#{command_hash[:index]} // target = THIS+index
+        D = A
+        @THIS
+        D = D+M
+        @THIS#{$line_count}
+        M = D
+
+        @SP // sp--
+        M = M-1
+        A = M // target* = sp*
+        D = M 
+        @THIS#{$line_count}
+        A = M
+        M = D
+
+        CODE
+      when 'that'
+        <<~CODE
+        // #{command_hash[:arg1]} #{command_hash[:segment]} #{command_hash[:index]} (line: #{$line_count})
+        @#{command_hash[:index]} // target = THAT+index
+        D = A
+        @THAT
+        D = D+M
+        @THAT#{$line_count}
+        M = D
+
+        @SP // sp--
+        M = M-1
+        A = M // target* = sp*
+        D = M 
+        @THAT#{$line_count}
+        A = M
+        M = D
+
+        CODE
+      when 'temp'
+        <<~CODE
+        // #{command_hash[:arg1]} #{command_hash[:segment]} #{command_hash[:index]} (line: #{$line_count})
+        @#{command_hash[:index]} // target = 5+index
+        D = A
+        @5
+        D = D+A
+        @TEMP#{$line_count}
+        M = D
+
+        @SP // sp--
+        M = M-1
+        A = M // target* = sp*
+        D = M 
+        @TEMP#{$line_count}
+        A = M
         M = D
 
         CODE
       end
     end
-
-    # pop to be added
   end
 end
