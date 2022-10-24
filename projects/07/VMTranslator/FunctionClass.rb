@@ -357,6 +357,33 @@ class Writer
         M = M+1
 
         CODE
+      when 'pointer'
+        case command_hash[:index]
+        when '0' 
+          <<~CODE
+          // #{command_hash[:arg1]} #{command_hash[:segment]} #{command_hash[:index]} (line: #{$line_count})
+          @THIS // *SP = THIS, SP++
+          D = M
+          @SP
+          A = M
+          M = D
+          @SP
+          M = M+1
+
+          CODE
+        when '1' 
+          <<~CODE
+          // #{command_hash[:arg1]} #{command_hash[:segment]} #{command_hash[:index]} (line: #{$line_count})
+          @THAT // *SP = THAT, SP++
+          D = M
+          @SP
+          A = M
+          M = D
+          @SP
+          M = M+1
+
+          CODE
+        end
       end
     elsif command_hash[:commandType] == 'C_POP'
       case command_hash[:segment]
@@ -455,6 +482,31 @@ class Writer
         M = D
 
         CODE
+      when 'pointer'
+        case command_hash[:index]
+        when '0' 
+          <<~CODE
+          // #{command_hash[:arg1]} #{command_hash[:segment]} #{command_hash[:index]} (line: #{$line_count})
+          @SP // SP--, THIS = SP*
+          M = M-1
+          A = M
+          D = M
+          @THIS
+          M = D
+          
+          CODE
+        when '1'
+          <<~CODE
+          // #{command_hash[:arg1]} #{command_hash[:segment]} #{command_hash[:index]} (line: #{$line_count})
+          @SP // SP--, THAT = SP*
+          M = M-1
+          A = M
+          D = M
+          @THAT
+          M = D
+
+          CODE
+        end
       end
     end
   end
