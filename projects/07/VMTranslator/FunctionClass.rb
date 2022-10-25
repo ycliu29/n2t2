@@ -100,6 +100,7 @@ class Writer
       @SP
       A = M-1
       M = M+D
+
       CODE
     when 'sub'
       <<~CODE
@@ -112,6 +113,7 @@ class Writer
       @SP
       A = M-1
       M = M-D
+
       CODE
     when 'neg'
       <<~CODE
@@ -119,6 +121,7 @@ class Writer
       @SP
       A = M-1
       M = -M
+
       CODE
     when 'eq'
       <<~CODE
@@ -133,18 +136,17 @@ class Writer
       D = D-M
       @EQ#{$line_count}
       D;JEQ
-
       @SP // (SP-1)* = 0
       A = M-1
       M = 0
       @END#{$line_count}
       0;JEQ
-
       (EQ#{$line_count}) // (SP-1)* = -1
       @SP
       A = M-1
       M = -1
       (END#{$line_count})
+
       CODE
     when 'gt'
       <<~CODE
@@ -159,18 +161,17 @@ class Writer
       D = M-D
       @GT#{$line_count}
       D;JGT
-
       @SP // (SP-1)* = 0
       A = M-1
       M = 0
       @END#{$line_count}
       0;JEQ
-
       (GT#{$line_count}) // (SP-1)* = -1
       @SP
       A = M-1
       M = -1
       (END#{$line_count})
+
       CODE
     when 'lt'
       <<~CODE
@@ -185,18 +186,17 @@ class Writer
       D = M-D
       @LT#{$line_count}
       D;JLT
-
       @SP // (SP-1)* = 0
       A = M-1
       M = 0
       @END#{$line_count}
       0;JEQ
-
       (LT#{$line_count}) // (SP-1)* = -1
       @SP
       A = M-1
       M = -1
       (END#{$line_count})
+
       CODE
     when 'and'
       <<~CODE
@@ -208,6 +208,7 @@ class Writer
       @SP
       A = M-1
       M = D&M
+
       CODE
     when 'or'
       <<~CODE
@@ -219,6 +220,7 @@ class Writer
       @SP
       A = M-1
       M = D|M
+
       CODE
     when 'not'
       <<~CODE
@@ -226,6 +228,7 @@ class Writer
       @SP // (SP-1)* = !(SP-1)*
       A = M-1
       M = !M
+
       CODE
     end
   end
@@ -243,6 +246,7 @@ class Writer
         M = D
         @SP // sp++
         M = M+1
+
         CODE
       when 'local'
         <<~CODE
@@ -253,7 +257,6 @@ class Writer
         D = D+M
         @LOCAL#{$line_count}
         M = D
-
         @LOCAL#{$line_count} // sp* = target*
         A = M
         D = M
@@ -262,6 +265,7 @@ class Writer
         M = D
         @SP // sp++
         M = M+1
+
         CODE
       when 'argument'
         <<~CODE
@@ -272,7 +276,6 @@ class Writer
         D = D+M
         @ARG#{$line_count}
         M = D
-
         @ARG#{$line_count} // sp* = target*
         A = M
         D = M
@@ -281,6 +284,7 @@ class Writer
         M = D
         @SP // sp++
         M = M+1
+
         CODE
       when 'this'
         <<~CODE
@@ -291,7 +295,6 @@ class Writer
         D = D+M
         @THIS#{$line_count}
         M = D
-
         @THIS#{$line_count} // sp* = target*
         A = M
         D = M
@@ -300,6 +303,7 @@ class Writer
         M = D
         @SP // sp++
         M = M+1
+
         CODE
       when 'that'
         <<~CODE
@@ -310,7 +314,6 @@ class Writer
         D = D+M
         @THAT#{$line_count}
         M = D
-
         @THAT#{$line_count} // sp* = target*
         A = M
         D = M
@@ -319,6 +322,7 @@ class Writer
         M = D
         @SP // sp++
         M = M+1
+
         CODE
       when 'temp'
         <<~CODE
@@ -329,7 +333,6 @@ class Writer
         D = D+A
         @TEMP#{$line_count}
         M = D
-
         @TEMP#{$line_count} // sp* = target*
         A = M
         D = M
@@ -338,6 +341,7 @@ class Writer
         M = D
         @SP // sp++
         M = M+1
+
         CODE
       when 'pointer'
         case command_hash[:index]
@@ -351,6 +355,7 @@ class Writer
           M = D
           @SP
           M = M+1
+
           CODE
         when '1' 
           <<~CODE
@@ -362,6 +367,7 @@ class Writer
           M = D
           @SP
           M = M+1
+
           CODE
         end
       when 'static'
@@ -374,6 +380,7 @@ class Writer
         M = D
         @SP
         M = M+1
+
         CODE
       end
     elsif command_hash[:commandType] == 'C_POP'
@@ -387,7 +394,6 @@ class Writer
         D = D+M
         @LOCAL#{$line_count}
         M = D
-
         @SP // sp--
         M = M-1
         A = M // target* = sp*
@@ -395,6 +401,7 @@ class Writer
         @LOCAL#{$line_count}
         A = M
         M = D
+
         CODE
       when 'argument'
         <<~CODE
@@ -405,7 +412,6 @@ class Writer
         D = D+M
         @ARG#{$line_count}
         M = D
-
         @SP // sp--
         M = M-1
         A = M // target* = sp*
@@ -413,6 +419,7 @@ class Writer
         @ARG#{$line_count}
         A = M
         M = D
+
         CODE
       when 'this'
         <<~CODE
@@ -423,7 +430,6 @@ class Writer
         D = D+M
         @THIS#{$line_count}
         M = D
-
         @SP // sp--
         M = M-1
         A = M // target* = sp*
@@ -431,6 +437,7 @@ class Writer
         @THIS#{$line_count}
         A = M
         M = D
+
         CODE
       when 'that'
         <<~CODE
@@ -441,7 +448,6 @@ class Writer
         D = D+M
         @THAT#{$line_count}
         M = D
-
         @SP // sp--
         M = M-1
         A = M // target* = sp*
@@ -449,6 +455,7 @@ class Writer
         @THAT#{$line_count}
         A = M
         M = D
+
         CODE
       when 'temp'
         <<~CODE
@@ -459,7 +466,6 @@ class Writer
         D = D+A
         @TEMP#{$line_count}
         M = D
-
         @SP // sp--
         M = M-1
         A = M // target* = sp*
@@ -467,6 +473,7 @@ class Writer
         @TEMP#{$line_count}
         A = M
         M = D
+
         CODE
       when 'pointer'
         case command_hash[:index]
@@ -479,6 +486,7 @@ class Writer
           D = M
           @THIS
           M = D
+
           CODE
         when '1'
           <<~CODE
@@ -489,6 +497,7 @@ class Writer
           D = M
           @THAT
           M = D
+
           CODE
         end
       when 'static'
@@ -500,6 +509,7 @@ class Writer
         D = M
         @#{$file_name}.#{command_hash[:index]}
         M = D
+        
         CODE
       end
     end

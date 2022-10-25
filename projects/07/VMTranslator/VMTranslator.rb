@@ -10,7 +10,7 @@ def main
   vm_f = File.open(target_file, 'r')
   asm_f = File.open("#{ARGV[0][0..-4]}.asm", 'w')
   $line_count = 0
-  $file_name = ARGV[0][0..-4]
+  $file_name = /([A-z]+).vm$/.match(ARGV[0]).captures[0]
 
   # iterate line by line
   vm_f.each do |line|
