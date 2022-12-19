@@ -1,8 +1,5 @@
 require_relative 'FunctionClass.rb'
 
-
-
-
 def main
   # open, create necessary files
   

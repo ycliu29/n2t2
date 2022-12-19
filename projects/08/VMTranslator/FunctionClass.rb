@@ -56,6 +56,15 @@ class Parser
 
     case line[0..3]
     when 'push' then result = 'C_PUSH'
+    when 'goto' then result = 'C_GOTO'
+    end
+    
+    case line[0..4]
+    when 'label' then result = 'C_LABEL'
+    end
+
+    case line[0..6]
+    when 'if-goto' then result = 'C_IF'
     end
 
     result == '' ? result = 'UNKNOWN' : nil
