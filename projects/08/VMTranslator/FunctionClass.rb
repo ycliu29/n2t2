@@ -18,6 +18,8 @@ class Parser
         command_hash[:arg1] = arg1(line)
         command_hash[:segment] = arg2(line)[0]
         command_hash[:index] = arg2(line)[1]
+      when 'C_LABEL' then command_hash[:arg1] = arg1(line)
+      # TODO: new function for segment, arg2 doesn't work here(incompatible regex pattern)
       end
     end
     command_hash
