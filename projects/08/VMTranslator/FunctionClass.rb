@@ -18,23 +18,18 @@ class Parser
         command_hash[:arg1] = arg1(line)
         command_hash[:segment] = arg2(line)[0]
         command_hash[:index] = arg2(line)[1]
-      when 'C_LABEL' then command_hash[:arg1] = arg1(line)
-      # TODO: new function for segment, arg2 doesn't work here(incompatible regex pattern)
+      when 'C_LABEL'
+        command_hash[:arg1] = arg1(line)
+        command_hash[:segment] = get_mid_section(line)
+      when 'C_GOTO'
+        command_hash[:arg1] = arg1(line)
+        command_hash[:segment] = get_mid_section(line)
+      when 'C_IF'
+        command_hash[:arg1] = arg1(line)
+        command_hash[:segment] = get_mid_section(line)
       end
     end
     command_hash
-  end
-
-  def self.comment_or_linebreak?(line)
-    if line[0..1] == "//"
-      true
-    elsif line[0] == "\n"
-      true
-    elsif line[0..1] == "\r\n"
-      true
-    else
-      false
-    end
   end
 
   def self.commandType(line)
@@ -82,6 +77,23 @@ class Parser
     regex = /[\s]([a-zA-Z]+)[\s]([0-9]+)[\s]|[\n]/
     captured_array = regex.match(line).captures
   end
+
+  def self.get_mid_section(line)
+    regex = /[a-zA-Z]+[\s]([^\s]+)/
+    mid_section = regex.match(line).captures.first
+  end
+
+  def self.comment_or_linebreak?(line)
+    if line[0..1] == "//"
+      true
+    elsif line[0] == "\n"
+      true
+    elsif line[0..1] == "\r\n"
+      true
+    else
+      false
+    end
+  end
 end
 
 class Writer
@@ -94,8 +106,41 @@ class Writer
     when 'C_ARITHMETIC' then writeArithmetic(command_hash[:arg1])
     when 'C_PUSH' then writePushPop(command_hash)
     when 'C_POP' then writePushPop(command_hash)
+    when 'C_LABEL' then writeLabel(command_hash)
+    when 'C_IF' then writeIf(command_hash)
+    when 'C_GOTO' then writeGoto(command_hash)
     else command_hash
     end
+  end
+
+  def self.writeGoto(command_hash)
+    <<~CODE
+    // #{command_hash[:arg1]} #{command_hash[:segment]} (line: #{$line_count})
+    @#{command_hash[:segment]} 
+    0;JEQ
+
+    CODE
+  end
+
+  def self.writeLabel(command_hash)
+    <<~CODE
+    // #{command_hash[:arg1]} #{command_hash[:segment]} (line: #{$line_count})
+    (#{command_hash[:segment]}) // create a label
+
+    CODE
+  end
+
+  def self.writeIf(command_hash)
+    <<~CODE
+    // #{command_hash[:arg1]} #{command_hash[:segment]} (line: #{$line_count})
+    @SP // sp --
+    M = M-1
+    A = M // D = sp*
+    D = M
+    @#{command_hash[:segment]}
+    D;JNE
+
+    CODE
   end
 
   def self.writeArithmetic(command)
