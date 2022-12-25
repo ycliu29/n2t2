@@ -27,13 +27,11 @@ A = M-1
 D = D-M
 @EQ10
 D;JEQ
-
 @SP // (SP-1)* = 0
 A = M-1
 M = 0
 @END10
 0;JEQ
-
 (EQ10) // (SP-1)* = -1
 @SP
 A = M-1
@@ -69,13 +67,11 @@ A = M-1
 D = D-M
 @EQ13
 D;JEQ
-
 @SP // (SP-1)* = 0
 A = M-1
 M = 0
 @END13
 0;JEQ
-
 (EQ13) // (SP-1)* = -1
 @SP
 A = M-1
@@ -111,13 +107,11 @@ A = M-1
 D = D-M
 @EQ16
 D;JEQ
-
 @SP // (SP-1)* = 0
 A = M-1
 M = 0
 @END16
 0;JEQ
-
 (EQ16) // (SP-1)* = -1
 @SP
 A = M-1
@@ -153,13 +147,11 @@ A = M-1
 D = M-D
 @LT19
 D;JLT
-
 @SP // (SP-1)* = 0
 A = M-1
 M = 0
 @END19
 0;JEQ
-
 (LT19) // (SP-1)* = -1
 @SP
 A = M-1
@@ -195,13 +187,11 @@ A = M-1
 D = M-D
 @LT22
 D;JLT
-
 @SP // (SP-1)* = 0
 A = M-1
 M = 0
 @END22
 0;JEQ
-
 (LT22) // (SP-1)* = -1
 @SP
 A = M-1
@@ -237,13 +227,11 @@ A = M-1
 D = M-D
 @LT25
 D;JLT
-
 @SP // (SP-1)* = 0
 A = M-1
 M = 0
 @END25
 0;JEQ
-
 (LT25) // (SP-1)* = -1
 @SP
 A = M-1
@@ -279,13 +267,11 @@ A = M-1
 D = M-D
 @GT28
 D;JGT
-
 @SP // (SP-1)* = 0
 A = M-1
 M = 0
 @END28
 0;JEQ
-
 (GT28) // (SP-1)* = -1
 @SP
 A = M-1
@@ -321,13 +307,11 @@ A = M-1
 D = M-D
 @GT31
 D;JGT
-
 @SP // (SP-1)* = 0
 A = M-1
 M = 0
 @END31
 0;JEQ
-
 (GT31) // (SP-1)* = -1
 @SP
 A = M-1
@@ -363,13 +347,11 @@ A = M-1
 D = M-D
 @GT34
 D;JGT
-
 @SP // (SP-1)* = 0
 A = M-1
 M = 0
 @END34
 0;JEQ
-
 (GT34) // (SP-1)* = -1
 @SP
 A = M-1
