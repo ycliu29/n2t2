@@ -27,6 +27,11 @@ class Parser
       when 'C_IF'
         command_hash[:arg1] = arg1(line)
         command_hash[:segment] = get_mid_section(line)
+      when 'C_FUNCTION'
+        command_hash[:arg1] = arg1(line)
+        command_hash[:segment] = arg2(line)[0]
+        command_hash[:index] = arg2(line)[1]
+      when 'C_RETURN' then command_hash[:arg1] = arg1(line)
       end
     end
     command_hash
@@ -60,8 +65,16 @@ class Parser
     when 'label' then result = 'C_LABEL'
     end
 
+    case line[0..5]
+    when 'return' then result = 'C_RETURN'
+    end
+
     case line[0..6]
     when 'if-goto' then result = 'C_IF'
+    end
+
+    case line[0..7]
+    when 'function' then result = 'C_FUNCTION'
     end
 
     result == '' ? result = 'UNKNOWN' : nil
@@ -74,7 +87,7 @@ class Parser
   end
 
   def self.arg2(line)
-    regex = /[\s]([a-zA-Z]+)[\s]([0-9]+)[\s]|[\n]/
+    regex = /[\s]([^\s]+)[\s]([0-9]+)[\s]|[\n]/
     captured_array = regex.match(line).captures
   end
 
@@ -109,8 +122,17 @@ class Writer
     when 'C_LABEL' then writeLabel(command_hash)
     when 'C_IF' then writeIf(command_hash)
     when 'C_GOTO' then writeGoto(command_hash)
+    when 'C_FUNCTION' then writeFunction(command_hash)
     else command_hash
     end
+  end
+
+  def self.writeFunction(command_hash)
+    <<~CODE
+    // #{command_hash[:arg1]} #{command_hash[:segment]} #{command_hash[:index]} (line: #{$line_count})
+    (#{command_hash[:segment]}) // create function label
+
+    CODE
   end
 
   def self.writeGoto(command_hash)
