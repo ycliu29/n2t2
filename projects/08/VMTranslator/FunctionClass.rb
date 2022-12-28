@@ -131,6 +131,34 @@ class Writer
     <<~CODE
     // #{command_hash[:arg1]} #{command_hash[:segment]} #{command_hash[:index]} (line: #{$line_count})
     (#{command_hash[:segment]}) // create function label
+    @SP // set LCL = SP
+    D = M 
+    @LCL 
+    M = D
+
+    @#{command_hash[:index]} // save index to a variable
+    D = A
+    @FUNC#{$line_count}
+    M = D
+
+    (START#{command_hash[:segment]})
+    @FUNC#{$line_count} // leave loop if variable is 0
+    D = M
+    @(EXIT#{command_hash[:segment]}) 
+    D;JEQ
+
+    @SP // sp* = 0, sp ++
+    A = M
+    M = 0
+    @SP 
+    M = M + 1
+    @FUNC#{$line_count}
+    M = M - 1
+
+    @(START#{command_hash[:segment]})
+    0;JMP
+
+    (EXIT#{command_hash[:segment]})
 
     CODE
   end
