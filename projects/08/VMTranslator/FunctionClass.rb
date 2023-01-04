@@ -123,8 +123,80 @@ class Writer
     when 'C_IF' then writeIf(command_hash)
     when 'C_GOTO' then writeGoto(command_hash)
     when 'C_FUNCTION' then writeFunction(command_hash)
+    when 'C_RETURN' then writeReturn(command_hash)
     else command_hash
     end
+  end
+
+  def self.writeReturn(command_hash)
+    <<~CODE
+    // #{command_hash[:arg1]} #{command_hash[:segment]} #{command_hash[:index]} (line: #{$line_count})
+    @LCL // endFrame = LCL
+    D = M
+    @endFrame#{$line_count}
+    M = D
+
+    @5 // retAddr = *(endFrame - 5)
+    D = A
+    @endFrame#{$line_count}
+    D = M - D
+    A = D
+    D = M
+    @retAddr#{$line_count}
+    M = D
+
+    @SP // *ARG = pop()
+    M = M - 1
+    A = M
+    D = M
+    @ARG
+    A = M
+    M = D
+
+    @ARG // SP = ARG + 1
+    D = M + 1
+    @SP
+    M = D
+
+    @endFrame#{$line_count}  // THAT = *(endFrame -1 )
+    D = M - 1
+    A = D
+    D = M
+    @THAT
+    M = D
+
+    @2  // THIS = *(endFrame -2 )
+    D = A
+    @endFrame#{$line_count}
+    D = M - D
+    A = D
+    D = M
+    @THIS
+    M = D
+
+    @3 // ARG = *(endFrame -3 )
+    D = A
+    @endFrame#{$line_count}  
+    D = M - D
+    A = D
+    D = M
+    @ARG
+    M = D
+
+    @4 // LCL = *(endFrame -4 )
+    D = A
+    @endFrame#{$line_count}  
+    D = M - D
+    A = D
+    D = M
+    @LCL
+    M = D
+
+    @retAddr#{$line_count}
+    0;JMP
+
+    CODE
+
   end
 
   def self.writeFunction(command_hash)
@@ -144,7 +216,7 @@ class Writer
     (START#{command_hash[:segment]})
     @FUNC#{$line_count} // leave loop if variable is 0
     D = M
-    @(EXIT#{command_hash[:segment]}) 
+    @EXIT#{command_hash[:segment]}
     D;JEQ
 
     @SP // sp* = 0, sp ++
@@ -155,7 +227,7 @@ class Writer
     @FUNC#{$line_count}
     M = M - 1
 
-    @(START#{command_hash[:segment]})
+    @START#{command_hash[:segment]}
     0;JMP
 
     (EXIT#{command_hash[:segment]})
