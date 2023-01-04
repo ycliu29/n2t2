@@ -1,9 +1,5 @@
 // function SimpleFunction.test 2 (line: 7)
 (SimpleFunction.test) // create function label
-@SP // set LCL = SP
-D = M 
-@LCL 
-M = D
 
 @2 // save index to a variable
 D = A
@@ -131,16 +127,16 @@ M = M-D
 // return   (line: 16)
 @LCL // endFrame = LCL
 D = M
-@endFrame16
+@EndFrame16
 M = D
 
 @5 // retAddr = *(endFrame - 5)
 D = A
-@endFrame16
+@EndFrame16
 D = M - D
 A = D
 D = M
-@retAddr16
+@RetAddr16
 M = D
 
 @SP // *ARG = pop()
@@ -156,7 +152,7 @@ D = M + 1
 @SP
 M = D
 
-@endFrame16  // THAT = *(endFrame -1 )
+@EndFrame16  // THAT = *(endFrame -1 )
 D = M - 1
 A = D
 D = M
@@ -165,7 +161,7 @@ M = D
 
 @2  // THIS = *(endFrame -2 )
 D = A
-@endFrame16
+@EndFrame16
 D = M - D
 A = D
 D = M
@@ -174,7 +170,7 @@ M = D
 
 @3 // ARG = *(endFrame -3 )
 D = A
-@endFrame16  
+@EndFrame16  
 D = M - D
 A = D
 D = M
@@ -183,13 +179,14 @@ M = D
 
 @4 // LCL = *(endFrame -4 )
 D = A
-@endFrame16  
+@EndFrame16  
 D = M - D
 A = D
 D = M
 @LCL
 M = D
 
-@retAddr16
+@RetAddr16
+A = M
 0;JMP
 

@@ -133,16 +133,16 @@ class Writer
     // #{command_hash[:arg1]} #{command_hash[:segment]} #{command_hash[:index]} (line: #{$line_count})
     @LCL // endFrame = LCL
     D = M
-    @endFrame#{$line_count}
+    @EndFrame#{$line_count}
     M = D
 
     @5 // retAddr = *(endFrame - 5)
     D = A
-    @endFrame#{$line_count}
+    @EndFrame#{$line_count}
     D = M - D
     A = D
     D = M
-    @retAddr#{$line_count}
+    @RetAddr#{$line_count}
     M = D
 
     @SP // *ARG = pop()
@@ -158,7 +158,7 @@ class Writer
     @SP
     M = D
 
-    @endFrame#{$line_count}  // THAT = *(endFrame -1 )
+    @EndFrame#{$line_count}  // THAT = *(endFrame -1 )
     D = M - 1
     A = D
     D = M
@@ -167,7 +167,7 @@ class Writer
 
     @2  // THIS = *(endFrame -2 )
     D = A
-    @endFrame#{$line_count}
+    @EndFrame#{$line_count}
     D = M - D
     A = D
     D = M
@@ -176,7 +176,7 @@ class Writer
 
     @3 // ARG = *(endFrame -3 )
     D = A
-    @endFrame#{$line_count}  
+    @EndFrame#{$line_count}  
     D = M - D
     A = D
     D = M
@@ -185,14 +185,15 @@ class Writer
 
     @4 // LCL = *(endFrame -4 )
     D = A
-    @endFrame#{$line_count}  
+    @EndFrame#{$line_count}  
     D = M - D
     A = D
     D = M
     @LCL
     M = D
 
-    @retAddr#{$line_count}
+    @RetAddr#{$line_count}
+    A = M
     0;JMP
 
     CODE
@@ -203,10 +204,6 @@ class Writer
     <<~CODE
     // #{command_hash[:arg1]} #{command_hash[:segment]} #{command_hash[:index]} (line: #{$line_count})
     (#{command_hash[:segment]}) // create function label
-    @SP // set LCL = SP
-    D = M 
-    @LCL 
-    M = D
 
     @#{command_hash[:index]} // save index to a variable
     D = A
