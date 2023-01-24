@@ -1,19 +1,39 @@
 require_relative 'FunctionClass.rb'
 
 def main
-  # open, create necessary files
-  
-  target_file = ARGV[0]
-  vm_f = File.open(target_file, 'r')
-  asm_f = File.open("#{ARGV[0][0..-4]}.asm", 'w')
   $line_count = 0
-  $file_name = /([A-z]+).vm$/.match(ARGV[0]).captures[0]
 
-  # iterate line by line
-  vm_f.each do |line|
-    $line_count += 1
-    translated_line = Writer.write(Parser.parse(line))
-    translated_line == nil ? nil : asm_f.write(translated_line)
+  target_path = ARGV[0]
+  if File.file?(target_path)
+    asm_f = File.open("#{ARGV[0][0..-4]}.asm", 'w')
+    vm_f = File.open(target_path, 'r')
+
+    vm_f.each do |line|
+      $line_count += 1
+      translated_line = Writer.write(Parser.parse(line))
+      translated_line == nil ? nil : asm_f.write(translated_line)
+    end
+    
+  elsif File.directory?(target_path)
+    asm_f_filename = target_path.match(/\/([\w]+)$/).captures.first
+    asm_f = File.open("#{asm_f_filename}.asm", 'w')
+
+    dir = Dir.new(target_path)
+    dir.each do |file|
+      if File.extname(file) != '.vm' 
+        next
+      else 
+        vm_f = File.open(file, 'r')
+        $line_count = 0
+        $file_name = file[0..-4]
+  
+        vm_f.each do |line|
+          $line_count += 1
+          translated_line = Writer.write(Parser.parse(line))
+          translated_line == nil ? nil : asm_f.write(translated_line)
+        end
+      end
+    end
   end
 end
 
