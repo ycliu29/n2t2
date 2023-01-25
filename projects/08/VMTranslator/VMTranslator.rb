@@ -23,8 +23,8 @@ def main
       if File.extname(file) != '.vm' 
         next
       else 
-        vm_f = File.open(file, 'r')
-        $line_count = 0
+        vm_path = File.join(dir.path, file)
+        vm_f = File.open(vm_path, "r")
         $file_name = file[0..-4]
   
         vm_f.each do |line|

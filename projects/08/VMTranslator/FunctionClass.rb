@@ -32,6 +32,10 @@ class Parser
         command_hash[:segment] = arg2(line)[0]
         command_hash[:index] = arg2(line)[1]
       when 'C_RETURN' then command_hash[:arg1] = arg1(line)
+      when 'C_CALL' then 
+        command_hash[:arg1] = arg1(line)
+        command_hash[:segment] = arg2(line)[0]
+        command_hash[:index] = arg2(line)[1]
       end
     end
     command_hash
@@ -59,6 +63,7 @@ class Parser
     case line[0..3]
     when 'push' then result = 'C_PUSH'
     when 'goto' then result = 'C_GOTO'
+    when 'call' then result = 'C_CALL'
     end
     
     case line[0..4]
@@ -124,8 +129,81 @@ class Writer
     when 'C_GOTO' then writeGoto(command_hash)
     when 'C_FUNCTION' then writeFunction(command_hash)
     when 'C_RETURN' then writeReturn(command_hash)
+    when 'C_CALL' then writeCall(command_hash)
     else command_hash
     end
+  end
+
+  def self.writeCall(command_hash)
+    <<~CODE
+    // #{command_hash[:arg1]} #{command_hash[:segment]} #{command_hash[:index]} (line: #{$line_count})
+
+    @RetAddr#{$line_count} // push returnAddress(SP ++)
+    D = M
+    @SP 
+    A = M
+    M = D
+    @SP
+    M = M + 1
+
+    @LCL // push LCL
+    D = M 
+    @SP
+    A = M
+    M = D
+    @SP
+    M = M + 1
+
+    @ARG // push ARG
+    D = M 
+    @SP
+    A = M
+    M = D
+    @SP
+    M = M + 1
+
+    @THIS // push THIS
+    D = M 
+    @SP
+    A = M
+    M = D
+    @SP
+    M = M + 1
+
+    @THAT // push THAT
+    D = M 
+    @SP
+    A = M
+    M = D
+    @SP
+    M = M + 1
+
+    @5 // ARG = SP - 5 - nArgs
+    D = A
+    @SP 
+    M = A
+    D = M - D  // D = SP - 5
+    @ARG#{$line_count}
+    M = D
+    @#{command_hash[:index]} // - nArgs
+    D = A
+    @ARG#{$line_count}
+    M = M - D
+    D = M
+    @ARG
+    M = D 
+
+    @SP // LCL = SP
+    D = M 
+    @LCL
+    M = D
+
+    @#{command_hash[:segment]} // goto functionName
+    0 ; JMP
+
+    (RetAddr#{$line_count}) // (returnAddress)
+
+    CODE
   end
 
   def self.writeReturn(command_hash)
