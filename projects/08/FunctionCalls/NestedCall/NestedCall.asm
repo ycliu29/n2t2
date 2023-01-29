@@ -62,7 +62,7 @@ M = D
 // call Sys.main 0 (line: 13)
 
 @RetAddr13 // push returnAddress(SP ++)
-D = M
+D = A
 @SP 
 A = M
 M = D
@@ -104,7 +104,6 @@ M = M + 1
 @5 // ARG = SP - 5 - nArgs
 D = A
 @SP 
-M = A
 D = M - D  // D = SP - 5
 @ARG13
 M = D
@@ -293,7 +292,7 @@ M = M+1
 // call Sys.add12 1 (line: 38)
 
 @RetAddr38 // push returnAddress(SP ++)
-D = M
+D = A
 @SP 
 A = M
 M = D
@@ -335,7 +334,6 @@ M = M + 1
 @5 // ARG = SP - 5 - nArgs
 D = A
 @SP 
-M = A
 D = M - D  // D = SP - 5
 @ARG38
 M = D

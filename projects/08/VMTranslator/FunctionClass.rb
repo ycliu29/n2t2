@@ -139,7 +139,7 @@ class Writer
     // #{command_hash[:arg1]} #{command_hash[:segment]} #{command_hash[:index]} (line: #{$line_count})
 
     @RetAddr#{$line_count} // push returnAddress(SP ++)
-    D = M
+    D = A
     @SP 
     A = M
     M = D
@@ -181,7 +181,6 @@ class Writer
     @5 // ARG = SP - 5 - nArgs
     D = A
     @SP 
-    M = A
     D = M - D  // D = SP - 5
     @ARG#{$line_count}
     M = D
