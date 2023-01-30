@@ -134,6 +134,83 @@ class Writer
     end
   end
 
+  def self.writeInit
+    <<~CODE
+    // writeInit | SP = 256
+    @256
+    D = A
+    @SP
+    M = D
+
+    // Call Sys.init 0
+
+    @RetAddr0 // push returnAddress(SP ++)
+    D = A
+    @SP 
+    A = M
+    M = D
+    @SP
+    M = M + 1
+
+    @LCL // push LCL
+    D = M 
+    @SP
+    A = M
+    M = D
+    @SP
+    M = M + 1
+
+    @ARG // push ARG
+    D = M 
+    @SP
+    A = M
+    M = D
+    @SP
+    M = M + 1
+
+    @THIS // push THIS
+    D = M 
+    @SP
+    A = M
+    M = D
+    @SP
+    M = M + 1
+
+    @THAT // push THAT
+    D = M 
+    @SP
+    A = M
+    M = D
+    @SP
+    M = M + 1
+
+    @5 // ARG = SP - 5 - nArgs
+    D = A
+    @SP 
+    D = M - D  // D = SP - 5
+    @ARG13
+    M = D
+    @0 // - nArgs
+    D = A
+    @ARG13
+    M = M - D
+    D = M
+    @ARG
+    M = D 
+
+    @SP // LCL = SP
+    D = M 
+    @LCL
+    M = D
+
+    @Sys.init // goto functionName
+    0 ; JMP
+
+    (RetAddr0) // (returnAddress)
+
+    CODE
+  end
+
   def self.writeCall(command_hash)
     <<~CODE
     // #{command_hash[:arg1]} #{command_hash[:segment]} #{command_hash[:index]} (line: #{$line_count})
