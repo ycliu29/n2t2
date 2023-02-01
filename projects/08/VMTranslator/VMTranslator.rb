@@ -6,9 +6,8 @@ def main
   target_path = ARGV[0]
   if File.file?(target_path)
     asm_f = File.open("#{ARGV[0][0..-4]}.asm", 'w')
-    asm_f.write(Writer.writeInit)
 
-    vm_f = File.open(target_path, 'r')
+    vm_f = File.open(target_path, "r")
 
     vm_f.each do |line|
       $line_count += 1
@@ -17,8 +16,8 @@ def main
     end
     
   elsif File.directory?(target_path)
-    asm_f_filename = target_path.match(/\/([\w]+)$/).captures.first
-    asm_f = File.open("#{asm_f_filename}.asm", 'w')
+    asm_f_filename = target_path.match(/([\w]+)$/).captures.first
+    asm_f = File.open("#{target_path}/#{asm_f_filename}.asm", 'w')
     asm_f.write(Writer.writeInit)
 
     dir = Dir.new(target_path)
