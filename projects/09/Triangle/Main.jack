@@ -1,0 +1,9 @@
+/** Initializes a new Square Dance game and starts running it. */
+class Main {
+    function void main() {
+        var Triangle tri;
+        let tri = Triangle.new(10,10,10);
+        do tri.draw();
+        return;
+    }
+}

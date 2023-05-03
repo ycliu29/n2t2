@@ -1,0 +1,41 @@
+
+/** Implements a graphical triangle. */
+class Triangle {
+
+    field int x, y; // screen location of the square's most center pixel
+    field int length; // height of this triangle, in pixels
+    field Array orientation; // in which direction should the triangle grow into, [1, -1] means growing to right and bottom of the center 
+
+    
+
+    /** Constructs a new square with a given location and size. */
+    constructor Triangle new(int Ax, int Ay, int Alength) {
+      
+      var Array arr;
+
+      let x = Ax;
+      let y = Ay;
+      let length = Alength;
+      
+      let arr = Array.new(2);
+      let arr[0] = 1; // denotes the x axis
+      let arr[1] = 1; // denotes the y axis
+
+      let orientation = arr;
+      return this;
+    }
+
+
+    /** Draws the square on the screen. */
+    method void draw() {
+      do Screen.setColor(true);
+      do Screen.drawLine(x, y, x + length, y);
+      return;
+   }
+
+    /** Disposes this triangle. */
+    method void dispose() {
+      do Memory.deAlloc(this);
+      return;
+   }
+}
