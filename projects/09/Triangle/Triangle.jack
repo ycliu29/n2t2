@@ -6,36 +6,81 @@ class Triangle {
     field int length; // height of this triangle, in pixels
     field Array orientation; // in which direction should the triangle grow into, [1, -1] means growing to right and bottom of the center 
 
-    
-
-    /** Constructs a new square with a given location and size. */
-    constructor Triangle new(int Ax, int Ay, int Alength) {
-      
+    /** Constructs a new triangle with a given center point and length. */
+    constructor Triangle new(int Cx, int Cy, int Tlength) {
       var Array arr;
-
-      let x = Ax;
-      let y = Ay;
-      let length = Alength;
+      let x = Cx;
+      let y = Cy;
+      let length = Tlength;
       
       let arr = Array.new(2);
       let arr[0] = 1; // denotes the x axis
-      let arr[1] = 1; // denotes the y axis
+      let arr[1] = -1; // denotes the y axis, the y axis in Screen API is reversed from common math notation 
 
       let orientation = arr;
       return this;
     }
 
+    /** Draws the triangle on the screen. */
+    method void draw(boolean color) {
+      var int i ;
+      let i = 1;
 
-    /** Draws the square on the screen. */
-    method void draw() {
-      do Screen.setColor(true);
-      do Screen.drawLine(x, y, x + length, y);
+      do Screen.setColor(color);
+      do Screen.drawLine(x, y, x + (length * orientation[0]) , y);
+      while (~(i > length))  {
+        do Screen.drawLine(x, y + (i * orientation[1]), x + ((length - i) * orientation[0]), y + (i * orientation[1]));
+        let i = (i + 1);
+      }
       return;
    }
 
-    /** Disposes this triangle. */
-    method void dispose() {
-      do Memory.deAlloc(this);
+    /** increase size of the triangle. */
+    method void inc() {
+      do draw(false);
+      let length = length + 3;
+      do draw(true);
       return;
-   }
+    }
+
+    /** decrease size of the triangle. */
+    method void dec() {
+      do draw(false);
+      if (length > 3) {
+        let length = length - 3;
+      }
+      do draw(true);
+      return;
+    }
+
+    /** turn the trinagle by 90 degrees. */
+    method void turn() {
+      var Array arr;
+      // 1,-1 -> 1,1, -1,1 -> -1,-1 ->
+      do draw(false);
+      if (orientation[0] = 1 & orientation[1] = -1) {
+        let orientation[1] = 1;
+        do draw(true);
+        return;
+      }
+
+      if (orientation[0] = 1 & orientation[1] = 1) {
+        let orientation[0] = (-1);
+        do draw(true);
+        return;
+      }
+
+      if (orientation[0] = -1 & orientation[1] = 1) {
+        let orientation[1] = -1;
+        do draw(true);
+        return;
+      }
+
+      if (orientation[0] = -1 & orientation[1] = -1) {
+        let orientation[0] = 1;
+        do draw(true);
+        return;
+      }
+      return;
+    }
 }
