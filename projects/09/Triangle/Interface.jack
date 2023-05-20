@@ -1,0 +1,29 @@
+/** Implements the user interface. */
+class Interface {
+
+    field int state;
+
+    /** Constructs the interface */
+    constructor Interface new() {
+      let state = 0;
+      return this;
+    }
+
+    method void drawborders() {
+      // draw the information block borders
+      do Screen.setColor(true);
+      do Screen.drawRectangle(0,0,127,3);
+      do Screen.drawRectangle(0,0,3,255);
+      do Screen.drawRectangle(0,252,127,255);
+      do Screen.drawRectangle(124,0,127,255);
+
+      // draw the trinagle playgroud borders
+      do Screen.drawRectangle(137,0,511,3);
+      do Screen.drawRectangle(137,0,140,255);
+      do Screen.drawRectangle(137,252,511,255);
+      do Screen.drawRectangle(508,0,511,255);
+      return;
+    }
+}
+
+

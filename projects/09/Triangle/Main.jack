@@ -2,29 +2,32 @@
 class Main {
     function void main() {
         var Triangle tri;
+        var Interface intf;
         var char key;  // the key currently pressed by the user
         var boolean exit;
 
         let exit = false;
         let tri = Triangle.new(30,30,16);
+        let intf = Interface.new();
 
-        do tri.draw(true);
+        do intf.drawborders();
+        // do tri.draw(true);
 
-        while (~exit) {
-          // waits for a key to be pressed
-          while (key = 0) {
-            let key = Keyboard.keyPressed();
-          }
+        // while (~exit) {
+        //   // waits for a key to be pressed
+        //   while (key = 0) {
+        //     let key = Keyboard.keyPressed();
+        //   }
 
-          if (key = 81)  { let exit = true; } // q key
-          if (key = 90)  { do tri.turn(); }   // z key
-          if (key = 65)  { do tri.inc(); }   // a key
-          if (key = 68)  { do tri.dec(); }   // d key
+        //   if (key = 81)  { let exit = true; } // q key
+        //   if (key = 90)  { do tri.turn(); }   // z key
+        //   if (key = 65)  { do tri.inc(); }   // a key
+        //   if (key = 68)  { do tri.dec(); }   // d key
 
-          while (~(key = 0)) {
-            let key = Keyboard.keyPressed();
-          }
-        }
+        //   while (~(key = 0)) {
+        //     let key = Keyboard.keyPressed();
+        //   }
+        // }
 
         return;
     }
