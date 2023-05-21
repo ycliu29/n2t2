@@ -23,10 +23,9 @@ class Interface {
       do Output.moveCursor(12,1);
       do Output.printString("Decrease: D");
       do Output.moveCursor(14,1);
-      do Output.printString("Turn: Z");
+      do Output.printString("Turn: R");
       do Output.moveCursor(16,1);
       do Output.printString("Quit: Q");
-      
       return;
     }
 

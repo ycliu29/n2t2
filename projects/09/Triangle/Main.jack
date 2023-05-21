@@ -7,28 +7,32 @@ class Main {
         var boolean exit;
 
         let exit = false;
-        let tri = Triangle.new(30,30,16);
+        let tri = Triangle.new(284,127,21);
         let intf = Interface.new();
 
         do intf.drawborders();
         do intf.drawinstructions();
-        // do tri.draw(true);
+        do tri.draw(true);
 
-        // while (~exit) {
-        //   // waits for a key to be pressed
-        //   while (key = 0) {
-        //     let key = Keyboard.keyPressed();
-        //   }
+        while (~exit) {
+          // waits for a key to be pressed
+          while (key = 0) {
+            let key = Keyboard.keyPressed();
+          }
 
-        //   if (key = 81)  { let exit = true; } // q key
-        //   if (key = 90)  { do tri.turn(); }   // z key
-        //   if (key = 65)  { do tri.inc(); }   // a key
-        //   if (key = 68)  { do tri.dec(); }   // d key
+          if (key = 81)  { let exit = true; } // q key
+          if (key = 82)  { do tri.turn(); }   // r key
+          if (key = 65)  { do tri.inc(); }   // a key
+          if (key = 68)  { do tri.dec(); }   // d key
+          if (key = 131)  { do tri.moveup(); } // up key
+          if (key = 133)  { do tri.movedown(); } // down key
+          if (key = 132)  { do tri.moveright(); } // right key
+          if (key = 130)  { do tri.moveleft(); } // left key
 
-        //   while (~(key = 0)) {
-        //     let key = Keyboard.keyPressed();
-        //   }
-        // }
+          while (~(key = 0)) {
+            let key = Keyboard.keyPressed();
+          }
+        }
 
         return;
     }

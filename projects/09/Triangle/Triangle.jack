@@ -23,7 +23,7 @@ class Triangle {
 
     /** Draws the triangle on the screen. */
     method void draw(boolean color) {
-      var int i ;
+      var int i;
       let i = 1;
 
       do Screen.setColor(color);
@@ -35,50 +35,158 @@ class Triangle {
       return;
    }
 
+    /** check if action falls within usable area, 161,4 -> 507,251 */
+    method boolean check(int nx, int ny, int nlength, arr norientation) {
+      var int i, tipx, tipy ;
+      let tipx = (nx + (nlength * norientation[0]));
+      let tipy = (ny + (nlength * norientation[1]));
+      if ( (nx < 508) & (nx > 160) & (ny < 252) & (ny > 3) & (tipx < 508) & (tipx > 160) & (tipy < 252) & (tipy > 3))
+      {
+        return true;
+      }
+      return false;
+    }
+
+    /** move the trinagle up */
+    method void moveup() {
+      var boolean checkresult;
+      let checkresult = check(x, (y - 10), length, orientation);
+
+      if (checkresult) {
+        do draw(false);
+        let y = (y - 10);
+        do draw(true);
+      }
+      return;
+    }
+
+    /** move the trinagle down */
+    method void movedown() {
+      var boolean checkresult;
+      let checkresult = check(x, (y + 10), length, orientation);
+
+      if (checkresult) {
+        do draw(false);
+        let y = (y + 10);
+        do draw(true);
+      }
+      return;
+    }
+
+    /** move the trinagle right */
+    method void moveright() {
+      var boolean checkresult;
+      let checkresult = check((x + 10), y, length, orientation);
+
+      if (checkresult) {
+        do draw(false);
+        let x = (x + 10);
+        do draw(true);
+      }
+      return;
+    }
+
+    /** move the trinagle left */
+    method void moveleft() {
+      var boolean checkresult;
+      let checkresult = check((x - 10), y, length, orientation);
+
+      if (checkresult) {
+        do draw(false);
+        let x = (x - 10);
+        do draw(true);
+      }
+      return;
+    }
+
     /** increase size of the triangle. */
     method void inc() {
-      do draw(false);
-      let length = length + 3;
-      do draw(true);
+      var boolean checkresult;
+      let checkresult = check(x, y, (length + 10), orientation);
+
+      if (checkresult) {
+        do draw(false);
+        let length = length + 10;
+        do draw(true);
+      }
       return;
     }
 
     /** decrease size of the triangle. */
     method void dec() {
-      do draw(false);
-      if (length > 3) {
-        let length = length - 3;
+      var boolean checkresult;
+      let checkresult = check(x, y, (length - 10), orientation);
+
+      if (checkresult) {
+        do draw(false);
+        if (length > 10) {
+          let length = length - 10;
+        }
+        do draw(true);
       }
-      do draw(true);
       return;
     }
 
     /** turn the trinagle by 90 degrees. */
     method void turn() {
       var Array arr;
+      var boolean checkresult;
       // 1,-1 -> 1,1, -1,1 -> -1,-1 ->
-      do draw(false);
+      
       if (orientation[0] = 1 & orientation[1] = -1) {
-        let orientation[1] = 1;
-        do draw(true);
+        let arr = orientation;
+        let arr[1] = 1;
+        let checkresult = check(x, y, length, arr);
+        let orientation[1] = -1;
+
+        if (checkresult) {
+
+          do draw(false);
+          let orientation[1] = 1;
+          do draw(true);
+        }
         return;
       }
 
       if (orientation[0] = 1 & orientation[1] = 1) {
-        let orientation[0] = (-1);
-        do draw(true);
+        let arr = orientation;
+        let arr[0] = -1;
+        let checkresult = check(x, y, length, arr);
+        let orientation[0] = 1;
+
+        if (checkresult) {
+          do draw(false);
+          let orientation[0] = -1;
+          do draw(true);
+        }
         return;
       }
 
       if (orientation[0] = -1 & orientation[1] = 1) {
-        let orientation[1] = -1;
-        do draw(true);
+        let arr = orientation;
+        let arr[1] = -1;
+        let checkresult = check(x, y, length, arr);
+        let orientation[1] = 1;
+
+        if (checkresult) {
+          do draw(false);
+          let orientation[1] = -1;
+          do draw(true);
+        }
         return;
       }
 
       if (orientation[0] = -1 & orientation[1] = -1) {
-        let orientation[0] = 1;
-        do draw(true);
+        let arr = orientation;
+        let arr[0] = 1;
+        let checkresult = check(x, y, length, arr);
+        let orientation[0] = -1;
+
+        if (checkresult) {
+          do draw(false);
+          let orientation[0] = 1;
+          do draw(true);
+        }
         return;
       }
       return;
