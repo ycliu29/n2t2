@@ -11,6 +11,7 @@ class Main {
         let intf = Interface.new();
 
         do intf.drawborders();
+        do intf.drawinstructions();
         // do tri.draw(true);
 
         // while (~exit) {

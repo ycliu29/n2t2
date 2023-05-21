@@ -9,18 +9,39 @@ class Interface {
       return this;
     }
 
+    method void drawinstructions() {
+      do Output.moveCursor(2,1);
+      do Output.printString("AMAZING Triangle");
+      do Output.moveCursor(5,1);
+      do Output.printString("CONTROL");
+      do Output.moveCursor(6,1);
+      do Output.printString("--");
+      do Output.moveCursor(8,1);
+      do Output.printString("Move: < ^ V > ");
+      do Output.moveCursor(10,1);
+      do Output.printString("Increase: A");
+      do Output.moveCursor(12,1);
+      do Output.printString("Decrease: D");
+      do Output.moveCursor(14,1);
+      do Output.printString("Turn: Z");
+      do Output.moveCursor(16,1);
+      do Output.printString("Quit: Q");
+      
+      return;
+    }
+
     method void drawborders() {
       // draw the information block borders
       do Screen.setColor(true);
-      do Screen.drawRectangle(0,0,127,3);
+      do Screen.drawRectangle(0,0,147,3);
       do Screen.drawRectangle(0,0,3,255);
-      do Screen.drawRectangle(0,252,127,255);
-      do Screen.drawRectangle(124,0,127,255);
+      do Screen.drawRectangle(0,252,147,255);
+      do Screen.drawRectangle(144,0,147,255);
 
       // draw the trinagle playgroud borders
-      do Screen.drawRectangle(137,0,511,3);
-      do Screen.drawRectangle(137,0,140,255);
-      do Screen.drawRectangle(137,252,511,255);
+      do Screen.drawRectangle(157,0,511,3);
+      do Screen.drawRectangle(157,0,160,255);
+      do Screen.drawRectangle(157,252,511,255);
       do Screen.drawRectangle(508,0,511,255);
       return;
     }
