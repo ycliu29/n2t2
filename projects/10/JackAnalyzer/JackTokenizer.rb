@@ -25,6 +25,15 @@ class JackTokenizer
     reviewed_array
   end
 
+  def remove_crlf(file_lines_array)
+    reviewed_array = []
+
+    file_lines_array.each do |line|
+      processed_string = line.chomp
+      processed_string.empty? ? nil : reviewed_array.append(processed_string)
+    end
+  end
+
   def lines
     i = 0 
     @lines.each do |line| 

@@ -72,4 +72,27 @@ RSpec.describe JackTokenizer do
       end
     end
   end
+
+  describe '.remove_crlf' do
+    subject { described_class.new(file.path).remove_crlf(test_array) } 
+
+    let(:string_a) { "def test_method\r\n" }
+    let(:test_array) { [string_a] }
+
+    context 'when strings contain other info' do
+      it do
+        expect(subject).to eq([ string_a.chomp! ])
+      end
+    end
+
+    context 'when there are crlf only string' do
+      let(:crlf_only_string) { "\r\n" } 
+
+      it do
+        result = subject
+        expect(result).to eq([ string_a.chomp! ])
+        expect(result).not_to include(crlf_only_string)
+      end
+    end
+  end
 end
