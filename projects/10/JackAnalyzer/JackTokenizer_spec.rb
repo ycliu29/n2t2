@@ -1,5 +1,6 @@
 require 'rspec'
 require 'tempfile'
+require 'pry'
 require_relative 'JackTokenizer.rb'
 
 RSpec.describe JackTokenizer do
@@ -92,6 +93,24 @@ RSpec.describe JackTokenizer do
         result = subject
         expect(result).to eq([ string_a.chomp! ])
         expect(result).not_to include(crlf_only_string)
+      end
+    end
+  end
+
+  describe '.convert_line_to_token_array' do
+    subject { described_class.new(file.path).convert_line_to_token_array(test_line) } 
+
+    context 'a class def' do
+      let(:test_line) { 'class Main {' }
+      it { expect(subject).to eq(%w[class Main {]) }
+    end
+
+    context 'a method call' do
+      let(:test_line) { 'let length = Keyboard.readInt("HOW MANY NUMBERS? ");' }
+      
+      # TODO: match  " " at a higher precedence
+      it do
+        binding.pry
       end
     end
   end

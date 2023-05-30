@@ -1,5 +1,7 @@
 class JackTokenizer
-  
+  KEYWORD = %w[class constructor function method field static var int char boolean void true false null this let do if else while return]
+  SYMBOL = %w[{ } ( ) [ ] . , ; + - * / & | < > = -]
+
   def initialize(path)
     @lines = IO.readlines(path)
     @temp = nil
@@ -32,6 +34,11 @@ class JackTokenizer
       processed_string = line.chomp
       processed_string.empty? ? nil : reviewed_array.append(processed_string)
     end
+  end
+
+  def convert_line_to_token_array(file_line)
+    pattern = Regexp.union((SYMBOL))
+    token_array = file_line.scan(/#{pattern}|[A-z_0-9]+/)
   end
 
   def lines
