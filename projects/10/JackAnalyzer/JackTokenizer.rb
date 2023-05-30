@@ -38,8 +38,10 @@ class JackTokenizer
 
   def convert_line_to_token_array(file_line)
     pattern = Regexp.union((SYMBOL))
-    token_array = file_line.scan(/#{pattern}|[A-z_0-9]+/)
+    token_array = file_line.scan(/".+"|#{pattern}|[A-z0-9_]+/) 
   end
+
+  
 
   def lines
     i = 0 
