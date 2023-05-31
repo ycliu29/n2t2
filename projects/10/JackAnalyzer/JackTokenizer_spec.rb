@@ -108,10 +108,23 @@ RSpec.describe JackTokenizer do
     context 'a method call' do
       let(:test_line) { 'let length = Keyboard.readInt("HOW MANY NUMBERS? ");' }
       
-      # TODO: match  " " at a higher precedence
-      it do
-        binding.pry
-      end
+      it { expect(subject).to eq(%w[let length = Keyboard . readInt ( "HOW\ MANY\ NUMBERS?\ " ) ;]) }
     end
+
+    context 'a while loop' do
+      let(:test_line) { 'while (i < length) {' }
+      
+      it { expect(subject).to eq(%w[while ( i < length ) {]) }
+    end
+
+    context 'a do statement' do
+      let(:test_line) { 'do Output.printInt(sum / length);' }
+      
+      it { expect(subject).to eq(%w[do Output . printInt ( sum / length ) ;]) }
+    end
+  end
+
+  describe '.get_token_type' do
+    # TODO: add test examples
   end
 end

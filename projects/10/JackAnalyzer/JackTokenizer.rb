@@ -1,15 +1,41 @@
+require 'pry'
+
 class JackTokenizer
   KEYWORD = %w[class constructor function method field static var int char boolean void true false null this let do if else while return]
   SYMBOL = %w[{ } ( ) [ ] . , ; + - * / & | < > = -]
 
+  class UnexpectedToken < StandardError; end
+
+  attr_reader :lines
+  attr_accessor :tokens
+  
   def initialize(path)
     @lines = IO.readlines(path)
-    @temp = nil
+    @tokens = nil
   end
 
   def build_tokens(file_lines_array)
-  
+    tokens = []
+
+    comments_removed_lines = remove_comments(file_lines_array)
+    white_space_removed_lines = remove_crlf(comments_removed_lines)
+    white_space_removed_lines.each do |line|
+      tokens += convert_line_to_token_array(line)
+    end
+
+    tokens
   end
+
+  def get_token_type(token)
+    KEYWORD.include?(token) ? (return 'keyword') : nil
+    SYMBOL.include?(token) ? (return 'symbol') : nil
+    /^(?!\d)[A-z\d_]+/.match?(token) ? (return 'identifier') : nil
+    /".+"/.match?(token) ? (return 'string_const') : nil
+    (token >= 0 && token < 32768) ? (return 'int_const') : nil
+    raise UnexpectedToken
+  end
+
+  private
 
   # remove three types of comments '//....', '/* .... */', '/** ..... */'
   def remove_comments(file_lines_array)
@@ -41,14 +67,4 @@ class JackTokenizer
     token_array = file_line.scan(/".+"|#{pattern}|[A-z0-9_]+/) 
   end
 
-  
-
-  def lines
-    i = 0 
-    @lines.each do |line| 
-      result = line.index('')
-      print "#{i}_#{result}:  #{line} " 
-      i = i + 1
-    end
-  end
 end
