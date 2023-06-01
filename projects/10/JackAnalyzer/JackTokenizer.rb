@@ -8,7 +8,7 @@ class JackTokenizer
 
   attr_reader :lines
   attr_accessor :tokens
-  
+
   def initialize(path)
     @lines = IO.readlines(path)
     @tokens = nil
@@ -31,11 +31,9 @@ class JackTokenizer
     SYMBOL.include?(token) ? (return 'symbol') : nil
     /^(?!\d)[A-z\d_]+/.match?(token) ? (return 'identifier') : nil
     /".+"/.match?(token) ? (return 'string_const') : nil
-    (token >= 0 && token < 32768) ? (return 'int_const') : nil
+    ((token.to_i == (Integer(token) rescue nil)) && token.to_i >= 0 && token.to_i < 32768) ? (return 'int_const') : nil
     raise UnexpectedToken
   end
-
-  private
 
   # remove three types of comments '//....', '/* .... */', '/** ..... */'
   def remove_comments(file_lines_array)
@@ -49,7 +47,7 @@ class JackTokenizer
       return_line.include?('/**') ? return_line = return_line.gsub(/\/\*\*.*\*\//, '') : nil
       reviewed_array.append(return_line)
     end
-    
+
     reviewed_array
   end
 
@@ -64,7 +62,7 @@ class JackTokenizer
 
   def convert_line_to_token_array(file_line)
     pattern = Regexp.union((SYMBOL))
-    token_array = file_line.scan(/".+"|#{pattern}|[A-z0-9_]+/) 
+    token_array = file_line.scan(/".+"|#{pattern}|[A-z0-9_]+/)
   end
 
 end
