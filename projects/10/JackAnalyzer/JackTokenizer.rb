@@ -14,7 +14,7 @@ class JackTokenizer
     @tokens = nil
   end
 
-  def build_tokens(file_lines_array)
+  def self.build_tokens(file_lines_array)
     tokens = []
 
     comments_removed_lines = remove_comments(file_lines_array)
@@ -26,7 +26,7 @@ class JackTokenizer
     tokens
   end
 
-  def get_token_type(token)
+  def self.get_token_type(token)
     KEYWORD.include?(token) ? (return 'keyword') : nil
     SYMBOL.include?(token) ? (return 'symbol') : nil
     /^(?!\d)[A-z\d_]+/.match?(token) ? (return 'identifier') : nil
@@ -35,8 +35,36 @@ class JackTokenizer
     raise UnexpectedToken
   end
 
+  def self.get_keyword(token)
+    "<keyword> #{token} </keyword>"
+  end
+
+  def self.get_symbol(token)
+    output = token.dup
+
+    case output
+    when '<' then output = '&lt;'
+    when '>' then output = '&gt;'
+    when '&' then output = '&amp;'
+    end
+
+    "<symbol> #{output} </symbol>"
+  end
+
+  def self.get_identifier(token)
+    "<identifier> #{token} </identifier>"
+  end
+
+  def self.get_intval(token)
+    "<integerConstant> #{token} </integerConstant>"
+  end
+
+  def self.get_stringval(token)
+    "<stringConstant> #{token[1..-2]}  </stringConstant>"
+  end
+
   # remove three types of comments '//....', '/* .... */', '/** ..... */'
-  def remove_comments(file_lines_array)
+  def self.remove_comments(file_lines_array)
     reviewed_array = []
 
     file_lines_array.each do |line|
@@ -51,7 +79,7 @@ class JackTokenizer
     reviewed_array
   end
 
-  def remove_crlf(file_lines_array)
+  def self.remove_crlf(file_lines_array)
     reviewed_array = []
 
     file_lines_array.each do |line|
@@ -60,9 +88,9 @@ class JackTokenizer
     end
   end
 
-  def convert_line_to_token_array(file_line)
-    pattern = Regexp.union((SYMBOL))
-    token_array = file_line.scan(/".+"|#{pattern}|[A-z0-9_]+/)
+  def self.convert_line_to_token_array(file_line)
+    pattern = Regexp.union(SYMBOL)
+    token_array = file_line.scan(/".+"|#{pattern}|[a-zA-Z0-9_]+/)
   end
 
 end

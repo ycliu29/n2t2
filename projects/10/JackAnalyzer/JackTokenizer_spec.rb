@@ -1,14 +1,11 @@
 require 'rspec'
-require 'tempfile'
 require 'pry'
 require_relative 'JackTokenizer.rb'
 
 RSpec.describe JackTokenizer do
 
-  let(:file) { Tempfile.new('temp') }
-
   describe '.remove_comments' do
-    subject { described_class.new(file.path).remove_comments(test_array) }
+    subject { described_class.remove_comments(test_array) }
 
     let(:string_a) { "def test_method\r\n" }
     let(:string_b) { "a = a * a\r\rn" }
@@ -75,7 +72,7 @@ RSpec.describe JackTokenizer do
   end
 
   describe '.remove_crlf' do
-    subject { described_class.new(file.path).remove_crlf(test_array) }
+    subject { described_class.remove_crlf(test_array) }
 
     let(:string_a) { "def test_method\r\n" }
     let(:test_array) { [string_a] }
@@ -98,7 +95,7 @@ RSpec.describe JackTokenizer do
   end
 
   describe '.convert_line_to_token_array' do
-    subject { described_class.new(file.path).convert_line_to_token_array(test_line) }
+    subject { described_class.convert_line_to_token_array(test_line) }
 
     context 'a class def' do
       let(:test_line) { 'class Main {' }
@@ -122,10 +119,16 @@ RSpec.describe JackTokenizer do
 
       it { expect(subject).to eq(%w[do Output . printInt ( sum / length ) ;]) }
     end
+
+    context 'a let statement with []' do
+      let(:test_line) { 'let a[i] = Keyboard.readInt("ENTER THE NEXT NUMBER: ");' }
+
+      it { expect(subject).to eq(%w[let a [ i ] = Keyboard . readInt ( "ENTER\ THE\ NEXT\ NUMBER:\ " ) ;]) }
+    end
   end
 
   describe '.get_token_type' do
-    subject { described_class.new(file.path).get_token_type(test_token) }
+    subject { described_class.get_token_type(test_token) }
 
     context 'when token is a keywaord' do
       let(:test_token) { 'constructor' }
