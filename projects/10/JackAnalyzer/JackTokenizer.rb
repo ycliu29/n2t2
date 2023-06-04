@@ -26,6 +26,21 @@ class JackTokenizer
     tokens
   end
 
+  def self.convert_token_to_xml(token)
+    token_type = get_token_type(token)
+    output = ''
+
+    case token_type
+    when 'keyword' then output = JackTokenizer.get_keyword(token)
+    when 'symbol' then output = JackTokenizer.get_symbol(token)
+    when 'identifier' then output = JackTokenizer.get_identifier(token)
+    when 'string_const' then output = JackTokenizer.get_stringval(token)
+    when 'int_const' then output = JackTokenizer.get_intval(token)
+    end
+
+    output
+  end
+
   def self.get_token_type(token)
     KEYWORD.include?(token) ? (return 'keyword') : nil
     SYMBOL.include?(token) ? (return 'symbol') : nil
@@ -70,7 +85,8 @@ class JackTokenizer
     file_lines_array.each do |line|
       return_line = line
 
-      return_line.include?('//') ? return_line = return_line.gsub(/\/\/.*\r\n/, "\r\n") : nil
+      # 處理結尾所有 newline 的可能 情境
+      return_line.include?('//') ? return_line = return_line.gsub(/\/\/.*(\r\n|\r|\n)/, "\r\n") : nil
       return_line.include?('/*') ? return_line = return_line.gsub(/\/\*.*\*\//, '') : nil
       return_line.include?('/**') ? return_line = return_line.gsub(/\/\*\*.*\*\//, '') : nil
       reviewed_array.append(return_line)

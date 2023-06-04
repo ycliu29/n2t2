@@ -5,33 +5,34 @@ def main()
   input_path = ARGV[0]
 
   if File.file?(input_path)
-    file_name = File.basename(input_path, ".*")
-    dir = File.dirname(input_path)
-    xml_file = File.open("#{dir}/#{file_name}_test.xml", 'w')
+    build_xml_file(input_path)
 
-    tokenizer = JackTokenizer.new(input_path)
-    tokenizer.tokens = JackTokenizer.build_tokens(tokenizer.lines) 
+  elsif File.directory?(input_path)
+    jack_files = Dir.glob("#{input_path}/*.jack")
 
-    xml_file.write("<tokens>\r\n")
-    tokenizer.tokens.each do |token|
-      # TODO: encapsulate these logics into tokenizer
-      token_type = JackTokenizer.get_token_type(token)
-      case token_type 
-      when 'keyword' then xml_file.write(JackTokenizer.get_keyword(token))
-      when 'symbol' then xml_file.write(JackTokenizer.get_symbol(token))
-      when 'identifier' then xml_file.write(JackTokenizer.get_identifier(token))
-      when 'string_const' then xml_file.write(JackTokenizer.get_stringval(token))
-      when 'int_const' then xml_file.write(JackTokenizer.get_intval(token))
-      end
-
-      xml_file.write("\r\n")
+    jack_files.each do |file_path|
+      build_xml_file(file_path)
     end
-    xml_file.write("</tokens>\r\n")
-    xml_file.close
-
   end
 end
 
+def build_xml_file(jack_file_path)
+  base_name = File.basename(jack_file_path, ".*")
+  dir = File.dirname(jack_file_path)
+  xml_file = File.open("#{dir}/#{base_name}_test.xml", 'w')
+
+  tokenizer = JackTokenizer.new(jack_file_path)
+  tokenizer.tokens = JackTokenizer.build_tokens(tokenizer.lines)
+
+  xml_file.write("<tokens>\r\n")
+
+  tokenizer.tokens.each do |token|
+    xml_file.write(JackTokenizer.convert_token_to_xml(token))
+    xml_file.write("\r\n")
+  end
+
+  xml_file.write("</tokens>\r\n")
+  xml_file.close
+end
+
 main
-
-
