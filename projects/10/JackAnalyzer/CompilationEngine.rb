@@ -16,15 +16,35 @@ class CompilationEngine
   end
 
   def compile_class
+    # token
     eat('tokens', nil)
+    indent
     @output.write("<class>")
     add_linebreak
 
+    # class / className / {
     @indentation += 2
     eat('keyword', 'class')
+    indent_and_write_last_token
+    eat('identifier', nil)
+    indent_and_write_last_token
+    eat('symbol', '{')
+    indent_and_write_last_token
+
+    compile_class_var_dec_or_subroutine_dec
+
+    # } / token
+    eat('symbol', '}')
+    indent_and_write_last_token
+
+    eat('tokens', nil)
+    @indentation -= 2
     indent
-    write_last_token
-    add_linebreak
+    @output.write("</class>")
+  end
+
+  def compile_class_var_dec_or_subroutine_dec
+    nil
   end
 
   def peak(peak_index)
@@ -36,17 +56,20 @@ class CompilationEngine
     { type: match_data[0], value: match_data[1] }
   end
 
-  def eat(type, value)
+  def eat(type, value = nil)
     current_token = peak(0)
 
-    riase UnexpectedToken if type != current_token[:type] || value != current_token[:value]
+    raise UnexpectedToken if type != current_token[:type]
+    value.nil? ? nil : ( raise UnexpectedToken if value != current_token[:value] )
+
     @token_index += 1
 
     current_token
   end
 
-  def indent
-    @output.write("#{" " * @indentation}")
+  def indent_and_write_last_token
+    indent
+    write_last_token
   end
 
   def add_linebreak
@@ -56,5 +79,9 @@ class CompilationEngine
   def write_last_token
     raise OutOfRangeLastToken if @token_index == 0
     @output.write("#{@tokens[@token_index-1]}")
+  end
+
+  def indent
+    @output.write("#{" " * @indentation}")
   end
 end
