@@ -33,18 +33,18 @@ class CompilationEngine
 
     compile_class_var_dec_or_subroutine_dec
 
-    # } / token
-    eat('symbol', '}')
-    indent_and_write_last_token
+    # # } / token
+    # eat('symbol', '}')
+    # indent_and_write_last_token
 
-    eat('tokens', nil)
-    @indentation -= 2
-    indent
-    @output.write("</class>")
+    # eat('tokens', nil)
+    # @indentation -= 2
+    # indent
+    # @output.write("</class>")
   end
 
   def compile_class_var_dec_or_subroutine_dec
-    nil
+    current_token = peak(0)
   end
 
   def peak(peak_index)
