@@ -15,23 +15,26 @@ class CompilationEngine
     @output = File.open("#{File.dirname(token_file_path)}/#{File.basename(token_file_path, ".*")[0..-2]}_tt.xml", 'w')
   end
 
-  def compile_class
+  # TODO: 用 while loop 處理 0~n 個可能，改為 instance method（較單純）
+  def self.compile_class(compilation_engine)
+    ce = compilation_engine
+
     # token
-    eat('tokens', nil)
-    indent
-    @output.write("<class>")
-    add_linebreak
+    ce.eat('tokens', nil)
+    ce.indent
+    ce.output.write("<class>")
+    ce.add_linebreak
 
     # class / className / {
-    @indentation += 2
-    eat('keyword', 'class')
-    indent_and_write_last_token
-    eat('identifier', nil)
-    indent_and_write_last_token
-    eat('symbol', '{')
-    indent_and_write_last_token
+    ce.indentation += 2
+    ce.eat('keyword', 'class')
+    ce.indent_and_write_last_token
+    ce.eat('identifier', nil)
+    ce.indent_and_write_last_token
+    ce.eat('symbol', '{')
+    ce.indent_and_write_last_token
 
-    compile_class_var_dec_or_subroutine_dec
+    compile_class_var_dec_or_subroutine(ce)
 
     # # } / token
     # eat('symbol', '}')
@@ -43,8 +46,32 @@ class CompilationEngine
     # @output.write("</class>")
   end
 
-  def compile_class_var_dec_or_subroutine_dec
-    current_token = peak(0)
+  def self.compile_class_var_dec_or_subroutine(compilation_engine)
+    current_token = compilation_engine.peak(0)[:value]
+    puts current_token
+
+    # case current_token
+    # when 'static', 'field' then compile_classvar_declaration(compilation_engine)
+    #   # compile_class_var_dec_or_subroutine(compilation_engine)
+    # when 'constructor', 'function', 'method'
+    #   compile_subroutine(compilation_engine)
+    #   compile_class_var_dec_or_subroutine(compilation_engine)
+    # end
+    if %w(static field).include?(current_token)
+      binding.pry
+      write_class_v_declaration(compilation_engine)
+      # compile_class_var_dec_or_subroutine(compilation_engine)
+    end
+  end
+
+  # def self.compile_class_v_declaration(compilation_engine)
+  #   puts "compilation_engine_id: #{compilation_engine.object_id}"
+  #   puts "compilation_enginer_token_index_id #{compilation_engine.token_index.object_id}"
+  #   compilation_engine.token_index += 1
+  # end
+
+  def self.compile_subroutine(compilation_engine)
+    compilation_engine.token_index += 1
   end
 
   def peak(peak_index)
