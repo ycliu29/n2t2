@@ -45,39 +45,28 @@ RSpec.describe CompilationEngine do
     describe '.compile_class_var_dec_or_subroutine' do
       context 'when current token does not belong to either method' do
         it do
-          expect(CompilationEngine).not_to receive(:compile_class_var_dec)
-          expect(CompilationEngine).not_to receive(:compile_subroutine)
-          CompilationEngine.compile_class_var_dec_or_subroutine(subject)
+          expect(subject).not_to receive(:compile_class_var_dec)
+          expect(subject).not_to receive(:compile_subroutine)
+          subject.compile_class_var_dec_or_subroutine
         end
       end
 
       context 'when current token matches compile_class_var_dec' do
-        let!(:compilation_engine) { described_class.new(test_file) }
-        let!(:set_up_token) { compilation_engine.tokens[0] = "<keyword> static </keyword>\r\n" }
+        let!(:set_up_token) { subject.tokens[0] = "<keyword> static </keyword>\r\n" }
 
         it do
-          expect(CompilationEngine).to receive(:write_class_v_declaration).once
-          CompilationEngine.compile_class_var_dec_or_subroutine(compilation_engine)
+          expect(subject).to receive(:compile_class_var_dec).once
+          subject.compile_class_var_dec_or_subroutine
         end
       end
 
       context 'when current token matches compile_subroutine' do
         let!(:set_up_token) { subject.tokens[0] = "<keyword> function </keyword>\r\n" }
 
-        # it do
-        #   expect(subject).to receive(:compile_subroutine).once
-        #   subject.compile_class_var_dec_or_subroutine
-        # end
-      end
-
-      context 'when the next two tokens matches compile_subroutine' do
-        let!(:set_up_token) { subject.tokens[0] = "<keyword> function </keyword>\r\n" }
-        let!(:set_up_token2) { subject.tokens[1] = "<keyword> function </keyword>\r\n" }
-
-        # it do
-        #   expect(subject).to receive(:compile_subroutine).twice
-        #   subject.compile_class_var_dec_or_subroutine
-        # end
+        it do
+          expect(subject).to receive(:compile_subroutine).once
+          subject.compile_class_var_dec_or_subroutine
+        end
       end
     end
   end
