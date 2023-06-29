@@ -85,7 +85,7 @@ class JackTokenizer
     file_lines_array.each do |line|
       return_line = line
 
-      # 處理結尾所有 newline 的可能 情境
+      # 處理結尾所有 newline 的可能情境
       return_line.include?('//') ? return_line = return_line.gsub(/\/\/.*(\r\n|\r|\n)/, "\r\n") : nil
       return_line.include?('/*') ? return_line = return_line.gsub(/\/\*.*\*\//, '') : nil
       return_line.include?('/**') ? return_line = return_line.gsub(/\/\*\*.*\*\//, '') : nil
