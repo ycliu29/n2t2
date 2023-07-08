@@ -33,7 +33,7 @@ class CompilationEngine
     indent_and_write_last_token
 
     while %w(static field constructor function method).include?(peak(0)[:value])
-      compile_class_var_dec_or_subroutine
+      compile_class_var_dec_or_subroutine_dec
     end
 
     # # } / token
@@ -46,27 +46,98 @@ class CompilationEngine
     # @output.write("</class>")
   end
 
-  def compile_class_var_dec_or_subroutine
+  def compile_class_var_dec_or_subroutine_dec
     current_token = peak(0)[:value]
 
     case current_token
     when 'static', 'field'
       compile_class_var_dec
     when 'constructor', 'function', 'method'
-      compile_subroutine
+      compile_subroutine_dec
     end
   end
 
   def compile_class_var_dec
   end
 
-  def compile_subroutine
+  def compile_subroutine_dec
     indent
     output.write("<subroutineDec>")
     add_linebreak
 
+    # constructor | function | method
+    @indentation += 2
+    eat('keyword')
+    indent_and_write_last_token
+
+    # void | type(int, char, boolean, className)
+    eat('keyword')
+    indent_and_write_last_token
+
+    # subroutine name
+    eat('identifier')
+    indent_and_write_last_token
+
+    eat('symbol', '(')
+    indent_and_write_last_token
+
+    compile_parameter_list
+
+    eat('symbol', ')')
+    indent_and_write_last_token
+
+    compile_subroutine_body
+
     # TODO, unfinished method
     @token_index += 1
+  end
+
+  def compile_subroutine_body
+    indent
+    output.write('<subroutineBody>')
+    add_linebreak
+
+    @indentation +=2
+
+    eat('symbol', '{')
+    indent_and_write_last_token
+
+
+    # eat('symbol', '}')
+    # indent_and_write_last_token
+
+    @indentation -=2
+
+    indent
+    output.write('</subroutineBody>')
+    add_linebreak
+  end
+
+  def compile_parameter_list
+    indent
+    output.write("<parameterList>")
+    add_linebreak
+
+    @indentation += 2
+
+    while peak(0)[:value] != ')'
+      eat('keyword')
+      indent_and_write_last_token
+
+      eat('identifier')
+      indent_and_write_last_token
+
+      if peak(0)[:value] == ','
+        eat('symbol', ',')
+        indent_and_write_last_token
+      end
+    end
+
+    @indentation -= 2
+
+    indent
+    output.write("</parameterList>")
+    add_linebreak
   end
 
   def peak(peak_index)
