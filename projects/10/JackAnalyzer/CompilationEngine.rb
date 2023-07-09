@@ -3,7 +3,7 @@ require 'pry'
 class CompilationEngine
   attr_accessor :tokens, :token_index, :indentation, :output
 
-  OPERATOR = %w[+ - * / & | < > =]
+  OPERATOR = %w[+ - * / & | < > = &lt; &gt; &quot; &amp;]
   UNARYOP = %w[= ~]
 
   class IncorrectPeakIndex < StandardError; end
@@ -39,14 +39,15 @@ class CompilationEngine
       compile_class_var_dec_or_subroutine_dec
     end
 
-    # # } / token
-    # eat('symbol', '}')
-    # indent_and_write_last_token
+    # } / token
+    eat('symbol', '}')
+    indent_and_write_last_token
 
-    # eat('tokens', nil)
-    # @indentation -= 2
-    # indent
-    # @output.write("</class>")
+    @indentation -= 2
+    eat('tokens', nil)
+    indent
+    @output.write("</class>")
+    add_linebreak
   end
 
   def compile_class_var_dec_or_subroutine_dec
@@ -67,9 +68,9 @@ class CompilationEngine
     indent
     output.write("<subroutineDec>")
     add_linebreak
+    @indentation += 2
 
     # constructor | function | method
-    @indentation += 2
     eat('keyword')
     indent_and_write_last_token
 
@@ -91,8 +92,10 @@ class CompilationEngine
 
     compile_subroutine_body
 
-    # TODO, unfinished method
-    @token_index += 1
+    @indentation -= 2
+    indent
+    output.write('</subroutineDec>')
+    add_linebreak
   end
 
   def compile_subroutine_body
@@ -107,11 +110,10 @@ class CompilationEngine
 
     compile_var_dec
 
-    # TODO
     compile_statements
 
-    # eat('symbol', '}')
-    # indent_and_write_last_token
+    eat('symbol', '}')
+    indent_and_write_last_token
 
     @indentation -=2
 
@@ -130,6 +132,11 @@ class CompilationEngine
     while %w[let if while do return].include?(peak(0)[:value])
       case peak(0)[:value]
       when 'let' then compile_let
+      when 'while' then compile_while
+      when 'do' then compile_do
+      when 'return' then compile_return
+
+      # to be removed else clause
       else @token_index += 1
       end
     end
@@ -138,6 +145,108 @@ class CompilationEngine
 
     indent
     output.write('</statements>')
+    add_linebreak
+  end
+
+  def compile_return
+    indent
+    output.write('<returnStatement>')
+    add_linebreak
+    @indentation += 2
+
+    eat('keyword', 'return')
+    indent_and_write_last_token
+
+    if peak(0)[:value] != ';'
+      compile_expression
+    end
+
+    eat('symbol', ';')
+    indent_and_write_last_token
+
+    @indentation -= 2
+    indent
+    output.write('</returnStatement>')
+    add_linebreak
+  end
+
+  def compile_do
+    indent
+    output.write('<doStatement>')
+    add_linebreak
+    @indentation += 2
+
+    eat('keyword', 'do')
+    indent_and_write_last_token
+
+    case peak(1)[:value]
+    when '('
+      eat('identifer')
+      indent_and_write_last_token
+
+      eat('symbol', '(')
+      indent_and_write_last_token
+
+      compile_expression_list
+
+      eat('symbol', ')')
+      indent_and_write_last_token
+    when '.'
+      eat('identifier')
+      indent_and_write_last_token
+
+      eat('symbol', '.')
+      indent_and_write_last_token
+
+      eat('identifier')
+      indent_and_write_last_token
+
+      eat('symbol', '(')
+      indent_and_write_last_token
+
+      compile_expression_list
+
+      eat('symbol', ')')
+      indent_and_write_last_token
+    end
+
+    eat('symbol', ';')
+    indent_and_write_last_token
+
+    @indentation -= 2
+    indent
+    output.write('</doStatement>')
+    add_linebreak
+  end
+
+  def compile_while
+    indent
+    output.write('<whileStatement>')
+    add_linebreak
+    @indentation += 2
+
+    eat('keyword', 'while')
+    indent_and_write_last_token
+
+    eat('symbol', '(')
+    indent_and_write_last_token
+
+    compile_expression
+
+    eat('symbol', ')')
+    indent_and_write_last_token
+
+    eat('symbol', '{')
+    indent_and_write_last_token
+
+    compile_statements
+
+    eat('symbol', '}')
+    indent_and_write_last_token
+
+    @indentation -= 2
+    indent
+    output.write('</whileStatement>')
     add_linebreak
   end
 
@@ -277,11 +386,13 @@ class CompilationEngine
     add_linebreak
     @indentation += 2
 
-    compile_expression
-
-    while peak(0)[:value] == ','
-      eat('symbol', ',')
+    if peak(0)[:value] != ')'
       compile_expression
+
+      while peak(0)[:value] == ','
+        eat('symbol', ',')
+        compile_expression
+      end
     end
 
     @indentation -= 2
