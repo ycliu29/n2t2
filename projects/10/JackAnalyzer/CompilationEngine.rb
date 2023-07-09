@@ -3,6 +3,9 @@ require 'pry'
 class CompilationEngine
   attr_accessor :tokens, :token_index, :indentation, :output
 
+  OPERATOR = %w[+ - * / & | < > =]
+  UNARYOP = %w[= ~]
+
   class IncorrectPeakIndex < StandardError; end
   class IncorrectTokenIndex < StandardError; end
   class OutOfRangeLastToken < StandardError; end
@@ -102,6 +105,10 @@ class CompilationEngine
     eat('symbol', '{')
     indent_and_write_last_token
 
+    compile_var_dec
+
+    # TODO
+    compile_statements
 
     # eat('symbol', '}')
     # indent_and_write_last_token
@@ -111,6 +118,214 @@ class CompilationEngine
     indent
     output.write('</subroutineBody>')
     add_linebreak
+  end
+
+  def compile_statements
+    indent
+    output.write("<statements>")
+    add_linebreak
+
+    @indentation += 2
+
+    while %w[let if while do return].include?(peak(0)[:value])
+      case peak(0)[:value]
+      when 'let' then compile_let
+      else @token_index += 1
+      end
+    end
+
+    @indentation -= 2
+
+    indent
+    output.write('</statements>')
+    add_linebreak
+  end
+
+  def compile_let
+    indent
+    output.write('<letStatement>')
+    add_linebreak
+    @indentation += 2
+
+    eat('keyword', 'let')
+    indent_and_write_last_token
+
+    eat('identifier')
+    indent_and_write_last_token
+
+    if peak(0)[:value] == '['
+      eat('symbol', '[')
+      indent_and_write_last_token
+
+      compile_expression
+
+      eat('symbol', ']')
+      indent_and_write_last_token
+    end
+
+    eat('symbol', '=')
+    indent_and_write_last_token
+
+    compile_expression
+
+    eat('symbol', ';')
+    indent_and_write_last_token
+
+    @indentation -= 2
+    indent
+    output.write('</letStatement>')
+    add_linebreak
+  end
+
+  def compile_expression
+    indent
+    output.write('<expression>')
+    add_linebreak
+    @indentation += 2
+
+    compile_term
+
+    if OPERATOR.include?(peak(0)[:value])
+      # operator
+      @token_index += 1
+      indent_and_write_last_token
+
+      compile_term
+    end
+
+    @indentation -= 2
+    indent
+    output.write('</expression>')
+    add_linebreak
+  end
+
+  def compile_term
+    indent
+    output.write('<term>')
+    add_linebreak
+    @indentation += 2
+
+    if peak(1)[:value] == '['
+      eat('identifier')
+      indent_and_write_last_token
+
+      eat('symbol', '[')
+      indent_and_write_last_token
+
+      compile_expression
+
+      eat('symbol', ']')
+      indent_and_write_last_token
+
+    elsif peak(0)[:value] == '('
+      eat('symbol', '(')
+      indent_and_write_last_token
+
+      compile_expression
+
+      eat('symbol', ')')
+      indent_and_write_last_token
+
+    elsif peak(1)[:value] == '('
+      eat('identifier')
+      indent_and_write_last_token
+
+      eat('symbol', '(')
+      indent_and_write_last_token
+
+      compile_expression_list
+
+      eat('symbol', ')')
+      indent_and_write_last_token
+
+    elsif peak(1)[:value] == '.'
+      eat('identifier')
+      indent_and_write_last_token
+      eat('symbol','.')
+      indent_and_write_last_token
+      eat('identifier')
+      indent_and_write_last_token
+      eat('symbol', '(')
+      indent_and_write_last_token
+
+      compile_expression_list
+
+      eat('symbol', ')')
+      indent_and_write_last_token
+
+    elsif UNARYOP.include?(peak(0)[:value])
+      @token_index += 1
+      indent_and_write_last_token
+
+      compile_term
+    else
+      if %w[integerConstant stringConstant keywordConstant identifier].include?(peak(0)[:type])
+        @token_index += 1
+        indent_and_write_last_token
+      end
+    end
+
+    @indentation -= 2
+    indent
+    output.write('</term>')
+    add_linebreak
+  end
+
+  def compile_expression_list
+    indent
+    output.write('<expressionList>')
+    add_linebreak
+    @indentation += 2
+
+    compile_expression
+
+    while peak(0)[:value] == ','
+      eat('symbol', ',')
+      compile_expression
+    end
+
+    @indentation -= 2
+    indent
+    output.write('</expressionList>')
+    add_linebreak
+  end
+
+  def compile_var_dec
+    # var
+    while peak(0)[:value] == 'var'
+      indent
+      output.write('<varDec>')
+      add_linebreak
+
+      @indentation += 2
+
+      eat('keyword', 'var')
+      indent_and_write_last_token
+
+      # can be keyword (int, char, boolean) or identifier(className)
+      @token_index += 1
+      indent_and_write_last_token
+
+      eat('identifier')
+      indent_and_write_last_token
+
+      while peak(0)[:value] == ','
+        eat('symbol')
+        indent_and_write_last_token
+
+        eat('identifier')
+        indent_and_write_last_token
+      end
+
+      eat('symbol')
+      indent_and_write_last_token
+
+      @indentation -= 2
+
+      indent
+      output.write('</varDec>')
+      add_linebreak
+    end
   end
 
   def compile_parameter_list
