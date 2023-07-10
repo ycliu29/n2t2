@@ -62,6 +62,41 @@ class CompilationEngine
   end
 
   def compile_class_var_dec
+    indent
+    output.write('<classVarDec>')
+    add_linebreak
+    @indentation += 2
+
+    eat('keyword')
+    indent_and_write_last_token
+
+    # int | char | boolean | className
+    if peak(0)[:value] == 'keyword'
+      eat('keyword')
+      indent_and_write_last_token
+    else
+      eat('identifier')
+      indent_and_write_last_token
+    end
+
+    eat('identifier')
+    indent_and_write_last_token
+
+    while peak(0)[:value] != ';'
+      eat('symbol', ',')
+      indent_and_write_last_token
+
+      eat('identifier')
+      indent_and_write_last_token
+    end
+
+    eat('symbol', ';')
+    indent_and_write_last_token
+
+    @indentation -= 2
+    indent
+    output.write('</classVarDec>')
+    add_linebreak
   end
 
   def compile_subroutine_dec
