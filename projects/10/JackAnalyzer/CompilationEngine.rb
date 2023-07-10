@@ -4,7 +4,7 @@ class CompilationEngine
   attr_accessor :tokens, :token_index, :indentation, :output
 
   OPERATOR = %w[+ - * / & | < > = &lt; &gt; &quot; &amp;]
-  UNARYOP = %w[= ~]
+  UNARYOP = %w[- ~]
 
   class IncorrectPeakIndex < StandardError; end
   class IncorrectTokenIndex < StandardError; end
@@ -71,7 +71,7 @@ class CompilationEngine
     indent_and_write_last_token
 
     # int | char | boolean | className
-    if peak(0)[:value] == 'keyword'
+    if peak(0)[:type] == 'keyword'
       eat('keyword')
       indent_and_write_last_token
     else
@@ -110,7 +110,7 @@ class CompilationEngine
     indent_and_write_last_token
 
     # void | type(int, char, boolean, className)
-    eat('keyword')
+    @token_index += 1
     indent_and_write_last_token
 
     # subroutine name
@@ -170,9 +170,7 @@ class CompilationEngine
       when 'while' then compile_while
       when 'do' then compile_do
       when 'return' then compile_return
-
-      # to be removed else clause
-      else @token_index += 1
+      when 'if' then compile_if
       end
     end
 
@@ -180,6 +178,50 @@ class CompilationEngine
 
     indent
     output.write('</statements>')
+    add_linebreak
+  end
+
+  def compile_if
+    indent
+    output.write('<ifStatement>')
+    add_linebreak
+    @indentation += 2
+
+    eat('keyword', 'if')
+    indent_and_write_last_token
+
+    eat('symbol', '(')
+    indent_and_write_last_token
+
+    compile_expression
+
+    eat('symbol', ')')
+    indent_and_write_last_token
+
+    eat('symbol', '{')
+    indent_and_write_last_token
+
+    compile_statements
+
+    eat('symbol', '}')
+    indent_and_write_last_token
+
+    if peak(0)[:value] == 'else'
+      eat('keyword', 'else')
+      indent_and_write_last_token
+
+      eat('symbol', '{')
+      indent_and_write_last_token
+
+      compile_statements
+
+      eat('symbol', '}')
+      indent_and_write_last_token
+    end
+
+    @indentation -= 2
+    indent
+    output.write('</ifStatement>')
     add_linebreak
   end
 
@@ -216,7 +258,7 @@ class CompilationEngine
 
     case peak(1)[:value]
     when '('
-      eat('identifer')
+      eat('identifier')
       indent_and_write_last_token
 
       eat('symbol', '(')
@@ -370,6 +412,12 @@ class CompilationEngine
       eat('symbol', ')')
       indent_and_write_last_token
 
+    elsif UNARYOP.include?(peak(0)[:value])
+      @token_index += 1
+      indent_and_write_last_token
+
+      compile_term
+
     elsif peak(1)[:value] == '('
       eat('identifier')
       indent_and_write_last_token
@@ -396,14 +444,8 @@ class CompilationEngine
 
       eat('symbol', ')')
       indent_and_write_last_token
-
-    elsif UNARYOP.include?(peak(0)[:value])
-      @token_index += 1
-      indent_and_write_last_token
-
-      compile_term
     else
-      if %w[integerConstant stringConstant keywordConstant identifier].include?(peak(0)[:type])
+      if %w[integerConstant stringConstant keywordConstant identifier keyword].include?(peak(0)[:type])
         @token_index += 1
         indent_and_write_last_token
       end
@@ -426,6 +468,8 @@ class CompilationEngine
 
       while peak(0)[:value] == ','
         eat('symbol', ',')
+        indent_and_write_last_token
+
         compile_expression
       end
     end
