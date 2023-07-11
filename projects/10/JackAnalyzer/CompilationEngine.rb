@@ -1,5 +1,3 @@
-require 'pry'
-
 class CompilationEngine
   attr_accessor :tokens, :token_index, :indentation, :output
 
@@ -15,7 +13,7 @@ class CompilationEngine
     @tokens = IO.readlines(token_file_path)
     @token_index = 0
     @indentation = 0
-    @output = File.open("#{File.dirname(token_file_path)}/#{File.basename(token_file_path, ".*")[0..-2]}_tt.xml", 'w')
+    @output = File.open("#{File.dirname(token_file_path)}/#{File.basename(token_file_path, ".*")[0..-2]}.xml", 'w')
   end
 
   def compile_class
@@ -28,10 +26,13 @@ class CompilationEngine
 
     # class / className / {
     @indentation += 2
-    eat('keyword', 'class')
+
+    eat('keyword')
     indent_and_write_last_token
+
     eat('identifier', nil)
     indent_and_write_last_token
+
     eat('symbol', '{')
     indent_and_write_last_token
 
