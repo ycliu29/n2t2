@@ -548,8 +548,13 @@ class CompilationEngine
 
   def peak(peak_index)
     target_index = @token_index + peak_index
-    raise IncorrectPeakIndex if peak_index < 0
-    raise IncorrectTokenIndex if target_index > (@tokens.size - 1)
+    if peak_index < 0
+      puts @tokens[target_index]
+      raise IncorrectPeakIndex
+    elsif target_index > (@tokens.size - 1)
+      puts @tokens[target_index]
+      raise IncorrectTokenIndex
+    end
 
     match_data = /<\/?([A-Za-z]+)>(?: (.+) <\/[A-Za-z]+>)?/.match(@tokens[target_index]).captures
     { type: match_data[0], value: match_data[1] }

@@ -1,6 +1,6 @@
 class JackTokenizer
   KEYWORD = %w[class constructor function method field static var int char boolean void true false null this let do if else while return]
-  SYMBOL = %w[{ } ( ) [ ] . , ; + - * / & | < > = -]
+  SYMBOL = %w[{ } ( ) [ ] . , ; + - * / & | < > = - ~]
 
   class UnexpectedToken < StandardError; end
 
@@ -86,7 +86,14 @@ class JackTokenizer
       # 處理結尾所有 newline 的可能情境
       return_line.include?('//') ? return_line = return_line.gsub(/\/\/.*(\r\n|\r|\n)/, "\r\n") : nil
       return_line.include?('/*') ? return_line = return_line.gsub(/\/\*.*\*\//, '') : nil
-      return_line.include?('/**') ? return_line = return_line.gsub(/\/\*\*.*\*\//, '') : nil
+
+      # return_line.include?('/**') ? return_line.gsub(/\/\*\*.*/, '') : nil
+      # return_line.include?(' * ') ? return_line.gsub(/ \* .*/, '') : nil
+      # return_line.include?('*/') ? return_line.gsub(/\*\/.*/, '') : nil
+      return_line.include?('/**') ? return_line = return_line.gsub(/\/\*\*.*/, '') : nil
+      return_line.include?(' * ') ? return_line = return_line.gsub(/^ \* .*/, '') : nil
+      return_line.include?(' */') ? return_line = return_line.gsub(/^ \*\/.*/, '') : nil
+
       reviewed_array.append(return_line)
     end
 
